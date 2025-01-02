@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat } from 'next/font/google';
 import Navbar from "./componens/Navbar";
-import HamburgerMenu from "./componens/hamburger-spin";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -25,7 +24,6 @@ export default function RootLayout({
         style={{ backgroundImage: "url('/galaxy.jpg')" }}>
         <main>
           <Navbar/>
-          <HamburgerMenu />
           {children}
         </main>
       </body>

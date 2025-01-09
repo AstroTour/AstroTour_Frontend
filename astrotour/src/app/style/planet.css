@@ -2328,7 +2328,7 @@ html, body {
   
 }
 
-/* Bolygók elrendezése mobil/tablet nézetben */
+
 @media (max-width: 768px) {
   .solar_systm {
     display: flex;

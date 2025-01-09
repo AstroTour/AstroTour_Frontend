@@ -15,7 +15,6 @@ const Singin = () => {
       <div className="relative w-96 bg-white bg-opacity-10 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
         {isRegistering ? (
           <div className="p-8">
-            {/* Registration Form */}
             <h1 className="text-2xl font-bold text-white text-center mb-6">
               Registration
             </h1>
@@ -92,7 +91,6 @@ const Singin = () => {
           </div>
         ) : (
           <div className="p-8">
-            {/* Login Form */}
             <h1 className="text-2xl font-bold text-white text-center mb-6">Login</h1>
             <div className="relative mb-6">
               <input

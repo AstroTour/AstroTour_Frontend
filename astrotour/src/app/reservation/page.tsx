@@ -6,7 +6,7 @@ function page() {
       <div className="w-full max-w-md backdrop-blur-sm bg-black bg-opacity-40 p-6 rounded-lg shadow-lg border border-gray-300">
         <h1 className="text-2xl font-bold text-center mb-6 text-white">Foglalás</h1>
 
-        {/* Vezetéknév és Keresztnév */}
+
         <div className="flex gap-4 mb-4">
           <input
             type="text"
@@ -21,7 +21,7 @@ function page() {
         </div>
 
 
-        {/* Email cím */}
+        
         <div className="mb-4">
           <input
             type="email"
@@ -30,7 +30,7 @@ function page() {
           />
         </div>
 
-        {/* Bolygók */}
+        
         <h2 className="text-lg font-medium text-center mb-4 text-white">Bolygó kiválasztása</h2>
         <div className="flex justify-between items-center mb-6">
           {["mars", "jupiter", "venus", "pluto"].map((planet) => (
@@ -58,7 +58,7 @@ function page() {
           ))}
         </div>
 
-        {/* Indulási idő */}
+        
         <div className="mb-6 text-white">
           <input
             type="text"
@@ -67,7 +67,7 @@ function page() {
           />
         </div>
 
-        {/* Csomagok */}
+        
         <h2 className="text-lg font-medium text-center mb-4 text-white">Csomagok</h2>
         <div className="flex justify-between mb-6">
           <label className="flex items-center text-white">
@@ -90,7 +90,7 @@ function page() {
           </label>
         </div>
 
-        {/* Ülőhelyek */}
+        
         <h2 className="text-lg font-medium text-center mb-4 text-white">Ülőhelyek</h2>
         <div className="flex justify-between mb-6">
           <label className="flex items-center text-white">
@@ -113,7 +113,7 @@ function page() {
           </label>
         </div>
 
-        {/* Foglalás Gomb */}
+        
         <button
             type="submit"
             className="w-full py-3 bg-gradient-to-r from-white via-blue-600 to-purple-600 text-white rounded-full font-bold hover:from-purple-600 hover:to-blue-600 transition"

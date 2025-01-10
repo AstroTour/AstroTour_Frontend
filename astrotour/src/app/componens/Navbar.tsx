@@ -1,21 +1,23 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import HamburgerMenu from './hamburger-spin';
 import Mobilnav from './mobilnav';
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("username");
+    if (loggedInUser) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem("username");
-    setIsMenuOpen(false);  // Menüt bezárjuk kijelentkezés után
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    window.location.href = "/"; 
   };
 
   return (
@@ -35,35 +37,23 @@ function Navbar() {
           </div>
         </div>
 
-        <div className='hidden md:block relative'>
+        <div className='hidden md:flex items-center'>
           {isLoggedIn ? (
-            <div className="relative">
-              <button 
-                className="flex items-center text-white m-4"
-                onClick={toggleMenu}  // Ikon kattintáskor a menü nyitása
+            <>
+              <img
+                src="/user.png"
+                alt="Felhasználó"
+                width={40}
+                height={40}
+                className="mr-2"
+              />
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white py-1 px-4 rounded-full hover:bg-red-600 transition"
               >
-                <img
-                  src="/user.png"
-                  alt="Felhasználó"
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                />
-                <span>Felhasználó</span>
+                Kijelentkezés
               </button>
-
-              {/* Legördülő menü */}
-              {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
-                  <button
-                    onClick={handleLogout}
-                    className="block px-4 py-2 text-sm hover:bg-gray-200 w-full text-left"
-                  >
-                    Kijelentkezés
-                  </button>
-                </div>
-              )}
-            </div>
+            </>
           ) : (
             <Link href="/registration/login" className="m-4 flex justify-between rounded-xl border p-1">
               Bejelentkezés

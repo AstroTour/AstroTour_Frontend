@@ -11,7 +11,7 @@ function page() {
     "saturn",
     "uranus",
     "neptune",
-    "pluto", // Ha szeretnéd a törpebolygót is hozzáadni
+    "pluto",
   ];
 
   return (

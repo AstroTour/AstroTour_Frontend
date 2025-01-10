@@ -11,7 +11,7 @@ const Singin = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Ellenőrizzük a bejelentkezett felhasználót
+  
   useEffect(() => {
     const loggedInUser = localStorage.getItem("username");
     if (loggedInUser) {
@@ -46,11 +46,11 @@ const Singin = () => {
     }
 
     if (isRegistering) {
-      // Regisztráció esetén, elmentjük a felhasználó nevét a localStorage-ba
+      
       localStorage.setItem("username", username);
       setIsLoggedIn(true);
     } else {
-      // Bejelentkezés esetén, ellenőrizzük a felhasználó nevét
+      
       if (username === localStorage.getItem("username")) {
         setIsLoggedIn(true);
       } else {
@@ -61,31 +61,25 @@ const Singin = () => {
 
     setTimeout(() => {
       window.location.href = "/";
-    }, 500); // Késleltetés
+    }, 500); 
   };
 
   const handleLogout = () => {
     localStorage.removeItem("username");
     setIsLoggedIn(false);
-    window.location.href = "/"; // Átirányítás a főoldalra
+    window.location.href = "/";
   };
 
   return (
     <div className="flex justify-center items-center m-5">
-      <div className="relative w-96 bg-white bg-opacity-10 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
+      <div className="relative w-96 bg-black bg-opacity-40 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
         {isLoggedIn ? (
-          // Ha be van jelentkezve a felhasználó
+          
           <div className="p-8">
             <h1 className="text-2xl font-bold text-white text-center mb-6">
               Üdvözöljük, {localStorage.getItem("username")}!
             </h1>
             <div className="text-center">
-              <button
-                className="w-full py-2 bg-red-500 text-white rounded-full font-bold shadow-lg hover:bg-red-600 transition"
-                onClick={handleLogout}
-              >
-                Kijelentkezés
-              </button>
             </div>
           </div>
         ) : isRegistering ? (

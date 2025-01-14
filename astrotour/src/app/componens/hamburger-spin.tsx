@@ -10,7 +10,7 @@ const HamburgerMenu = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       <div
         className={`tham tham-e-squeeze tham-w-6 ${isOpen ? "tham-active" : ""} flex items-center justify-center absolute top-5 right-5 z-50`}
         onClick={toggleMenu}>

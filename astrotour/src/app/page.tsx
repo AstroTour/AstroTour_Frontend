@@ -10,12 +10,11 @@ export default function Home() {
 
   return (
     <div className="">
-      <div className="flex justify-center items-center m-40 ">
+      <div className="flex justify-center items-center m-40">
         {!clicked ? (
           <h1
-            className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-500 to-white"
-            onClick={handleClick}
-          >
+            className="lg:text-4xl md:text-2xl w-auto max-w-full font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-500 to-white break-words"
+             onClick={handleClick}>
             „Nem találod a helyed a Földön? Próbáld ki az űrt!”
           </h1>
         ) : (

@@ -11,6 +11,9 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "AstroTour",
   description: "AstroTour Official",
+  icons: {
+    icon: "/project.png",
+  },
 };
 
 export default function RootLayout({

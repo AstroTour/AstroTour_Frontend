@@ -23,6 +23,7 @@ export default {
           '100%': { transform: 'translateY(-500px) translateX(300px) scale(0)' },
         },
       },
+      darkMode: 'class',
     },
   },
 

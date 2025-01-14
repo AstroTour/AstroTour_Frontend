@@ -27,56 +27,56 @@ function Mobilnav() {
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="/about"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Rólunk
             </a>
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="/reservation"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Foglalás
             </a>
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="planets"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Bolygók
             </a>
           </li>
-          <li className="relative group">
+          <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="registration/login"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Bejelentkezés
             </a>
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="/timetables"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Menetrendek
             </a>
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="/gallery"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Gallery
             </a>
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
               href="F.A.Q"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               GY.I.K.
             </a>
           </li>
           <li className="relative group">
             <a
               href="information"
-              className="text-white group-hover:text-transparent group-hover:bg-transparent group-hover:backdrop-blur-none group-hover:opacity-100 transition-all duration-300">
+              className="text-white group-hover:text-sm duration-300 transform transition">
               Tájékoztatás
             </a>
           </li>

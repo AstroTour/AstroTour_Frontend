@@ -1,86 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSinginLogic } from "@/app/componens/singinLogic";
 import Image from "next/image";
+import { useSession } from "next-auth/react"; 
 
 const Singin = () => {
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {
+    isRegistering,
+    username,
+    setUsername,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    errorMessage,
+    toggleForm,
+    handleSubmit,
+    handleLogout,
+  } = useSinginLogic();
 
-  
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("username");
-    if (loggedInUser) {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const toggleForm = () => {
-    setIsRegistering((prev) => !prev);
-    setErrorMessage(""); 
-  };
-
-  const validateForm = () => {
-    if (!email || !email.includes("@")) {
-      setErrorMessage("Érvénytelen email cím.");
-      return false;
-    }
-
-    if (password.length < 8) {
-      setErrorMessage("A jelszónak legalább 8 karakter hosszúnak kell lennie.");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    if (isRegistering) {
-      
-      localStorage.setItem("username", username);
-      setIsLoggedIn(true);
-    } else {
-      
-      if (username === localStorage.getItem("username")) {
-        setIsLoggedIn(true);
-      } else {
-        setErrorMessage("Érvénytelen felhasználónév vagy jelszó.");
-        return;
-      }
-    }
-
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 500); 
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    setIsLoggedIn(false);
-    window.location.href = "/";
-  };
+  const { data: sessionData } = useSession();
 
   return (
     <div className="flex justify-center items-center m-5">
       <div className="relative w-96 bg-black bg-opacity-40 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
-        {isLoggedIn ? (
-          
+        {sessionData ? (
           <div className="p-8">
             <h1 className="text-2xl font-bold text-white text-center mb-6">
-              Üdvözöljük, {localStorage.getItem("username")}!
+              Üdvözöljük, {sessionData?.user?.username || "Felhasználó"}!
             </h1>
-            <div className="text-center">
-            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 bg-red-500 text-white rounded-full font-bold shadow-lg hover:bg-red-600 transition"
+            >
+              Kijelentkezés
+            </button>
           </div>
         ) : isRegistering ? (
           <div className="p-8">
@@ -140,7 +94,9 @@ const Singin = () => {
                 />
               </div>
               {errorMessage && (
-                <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>
+                <p className="text-red-500 text-sm text-center mb-4">
+                  {errorMessage}
+                </p>
               )}
               <button
                 type="submit"
@@ -155,7 +111,7 @@ const Singin = () => {
                 className="text-blue-500 hover:underline"
                 onClick={toggleForm}
               >
-                Belépés
+                Bejelentkezés
               </button>
             </p>
           </div>
@@ -167,16 +123,16 @@ const Singin = () => {
             <form onSubmit={handleSubmit}>
               <div className="relative mb-6">
                 <input
-                  type="text"
-                  placeholder="Felhasználónév"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  placeholder="Emailcím"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full p-4 pl-12 bg-transparent border border-white/20 text-white placeholder-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <Image
-                  src="/profile.png"
-                  alt="profile"
+                  src="/email.png"
+                  alt="email"
                   width={20}
                   height={20}
                   className="absolute top-1/2 left-4 transform -translate-y-1/2"
@@ -199,18 +155,11 @@ const Singin = () => {
                   className="absolute top-1/2 left-4 transform -translate-y-1/2"
                 />
               </div>
-              <div className="flex justify-between text-sm text-white mb-6">
-                <label>
-                  <input
-                    type="checkbox"
-                    className="text-blue-500 focus:ring-blue-500"
-                  />
-                  Emlékezz rám!
-                </label>
-                <a href="#" className="hover:underline">
-                  Elfelejtette jelszavát?
-                </a>
-              </div>
+              {errorMessage && (
+                <p className="text-red-500 text-sm text-center mb-4">
+                  {errorMessage}
+                </p>
+              )}
               <button
                 type="submit"
                 className="w-full py-2 bg-blue-500 text-white rounded-full font-bold shadow-lg hover:bg-blue-600 transition"

@@ -26,15 +26,11 @@ export default NextAuth({
           throw new Error("Hibás bejelentkezési adatok!");
         }
 
-        
         const user = await res.json();
 
-        
         if (user) {
           return user; 
         }
-
-        
         return null;
       },
     }),

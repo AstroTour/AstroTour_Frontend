@@ -1,9 +1,16 @@
-import React from 'react'
+import React from 'react';
+import FlightTable from '../componens/FlightTable';
+import SolarSystem from '../componens/SolarSystem';
+
+
 
 function page() {
   return (
-    <div className='text-white'>timetables</div>
-  )
+    <div className="flex h-screen bg-gray-200">
+      <FlightTable />
+      <SolarSystem />
+    </div>
+  );
 }
 
 export default page

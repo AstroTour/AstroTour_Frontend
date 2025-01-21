@@ -10,36 +10,46 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await fetch(`${process.env.LARAVEL_API_URL}/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-        });
+        try {
+          const res = await fetch(`${process.env.LARAVEL_API_URL}/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          });
 
-        
-        if (!res.ok) {
-          throw new Error("Hibás bejelentkezési adatok!");
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || "Érvénytelen bejelentkezési adatok!");
+          }
+
+          const data = await res.json();
+
+          if (data && data.user) {
+            return {
+              id: data.user.id,
+              email: data.user.email,
+              username: data.user.username,
+              accessToken: data.access_token,
+            };
+          }
+          return null;
+        } catch (error) {
+          console.error("Hitelesítési hiba:", error);
+          throw new Error("A bejelentkezés sikertelen. Kérjük, próbáld újra!");
         }
-
-        const user = await res.json();
-
-        if (user) {
-          return user; 
-        }
-        return null;
       },
     }),
   ],
   pages: {
-    signIn: "/signin",  
+    signIn: "/signin",
   },
   session: {
-    strategy: "jwt",  
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -47,17 +57,22 @@ export default NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.username = user.username;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.username = token.username;
+        session.user = {
+          id: token.id,
+          email: token.email,
+          username: token.username,
+        };
+        session.accessToken = token.accessToken;
       }
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET, 
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 });

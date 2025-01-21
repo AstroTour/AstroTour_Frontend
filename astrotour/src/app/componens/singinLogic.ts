@@ -72,6 +72,7 @@ export const useSinginLogic = () => {
   };
 
   return {
+    session,
     isRegistering,
     username,
     setUsername,

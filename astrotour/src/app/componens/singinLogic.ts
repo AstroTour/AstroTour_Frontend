@@ -38,7 +38,7 @@ export const useSinginLogic = () => {
 
     if (isRegistering) {
       try {
-        const res = await fetch("http://devsite.monvoie.com/api/register", {
+        const res = await fetch("http://devsite.monvoie.com/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password }),

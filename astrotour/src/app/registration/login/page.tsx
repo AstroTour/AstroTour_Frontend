@@ -1,8 +1,9 @@
 "use client";
 
-import { useSinginLogic } from "@/app/componens/singinLogic";
+
 import Image from "next/image";
 import { useSession } from "next-auth/react"; 
+import { useSinginLogic } from "@/app/componens/singinLogic";
 
 const Singin = () => {
   const {

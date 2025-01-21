@@ -38,7 +38,7 @@ export const useSinginLogic = () => {
 
     if (isRegistering) {
       try {
-        const res = await fetch("http://devsite.monvoie.com/register", {
+        const res = await fetch("http://devsite.monvoie.com/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password }),
@@ -72,7 +72,6 @@ export const useSinginLogic = () => {
   };
 
   return {
-    session,
     isRegistering,
     username,
     setUsername,

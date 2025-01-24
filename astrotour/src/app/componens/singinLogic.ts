@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from 'axios';
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export const useSinginLogic = () => {
@@ -38,9 +39,15 @@ export const useSinginLogic = () => {
 
     if (isRegistering) {
       try {
-        const res = await fetch("http://devsite.monvoie.com/register", {
+
+        const csrfResponse = await fetch('http://devsite.monvoie.com/csrf-token')
+        const csrfData = await csrfResponse.json();
+        const csrfToken = csrfData.csrfToken
+
+        const res = await fetch('http://devsite.monvoie.com/api/register', {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json"
+           },
           body: JSON.stringify({ username, email, password }),
         });
 

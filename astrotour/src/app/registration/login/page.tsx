@@ -1,8 +1,6 @@
 "use client";
-
-
 import Image from "next/image";
-import { useSession } from "next-auth/react"; 
+import { useSession } from "next-auth/react";
 import { useSinginLogic } from "@/app/componens/singinLogic";
 
 const Singin = () => {
@@ -167,16 +165,16 @@ const Singin = () => {
               >
                 Bejelentkezés
               </button>
-              <p className="text-sm text-center text-white mt-4">
-                Nincs még fiókja?{" "}
-                <button
-                  className="text-blue-500 hover:underline"
-                  onClick={toggleForm}
-                >
-                  Regisztráció
-                </button>
-              </p>
             </form>
+            <p className="text-sm text-center text-white mt-4">
+              Nincs még fiókja?{" "}
+              <button
+                className="text-blue-500 hover:underline"
+                onClick={toggleForm}
+              >
+                Regisztráció
+              </button>
+            </p>
           </div>
         )}
       </div>

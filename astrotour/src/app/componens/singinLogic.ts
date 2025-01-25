@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from 'axios';
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export const useSinginLogic = () => {
@@ -30,47 +29,58 @@ export const useSinginLogic = () => {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault(); 
     if (!validateForm()) {
       return;
     }
 
-    if (isRegistering) {
-      try {
-
-        const csrfResponse = await fetch('http://devsite.monvoie.com/csrf-token')
-        const csrfData = await csrfResponse.json();
-        const csrfToken = csrfData.csrfToken
-
-        const res = await fetch('http://devsite.monvoie.com/api/register', {
+    try {
+      if (isRegistering) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
           method: "POST",
-          headers: { "Content-Type": "application/json"
-           },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ username, email, password }),
         });
 
-        if (!res.ok) {
-          setErrorMessage("Regisztráció sikertelen.");
+        if (!response.ok) {
+          const errorData = await response.json();
+          setErrorMessage(errorData.message || "Regisztráció sikertelen.");
           return;
         }
 
         setIsRegistering(false);
         setErrorMessage("");
-      } catch (error) {
-        setErrorMessage("Hiba történt a regisztráció során.");
-      }
-    } else {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
+        alert("Sikeres regisztráció! Most már bejelentkezhetsz.");
+      } else {
+        
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
 
-      if (!result?.ok) {
-        setErrorMessage("Érvénytelen bejelentkezési adatok.");
+        if (!response.ok) {
+          const errorData = await response.json();
+          setErrorMessage(errorData.message || "Érvénytelen bejelentkezési adatok.");
+          return;
+        }
+
+        const data = await response.json();
+
+        
+        signIn("credentials", {
+          redirect: false,
+          email: data.email,
+          password,
+        });
       }
+    } catch (error) {
+      setErrorMessage("Hiba történt. Próbáld újra később!");
     }
   };
 

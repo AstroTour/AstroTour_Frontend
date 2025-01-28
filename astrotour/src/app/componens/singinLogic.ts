@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation"; 
 
 export const useSinginLogic = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -7,8 +8,8 @@ export const useSinginLogic = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
   const { data: session } = useSession();
+  const router = useRouter(); 
 
   const toggleForm = () => {
     setIsRegistering((prev) => !prev);
@@ -71,11 +72,17 @@ export const useSinginLogic = () => {
 
         const data = await response.json();
 
-        signIn("credentials", {
+        const loginResult = await signIn("credentials", {
           redirect: false,
           email: data.email,
           password,
         });
+
+        if (loginResult?.ok) {
+          router.push("/");
+        } else {
+          setErrorMessage("Bejelentkezés sikertelen.");
+        }
       }
     } catch (error) {
       setErrorMessage("Hiba történt. Próbáld újra később!");
@@ -84,6 +91,7 @@ export const useSinginLogic = () => {
 
   const handleLogout = () => {
     signOut();
+    router.push("/"); 
   };
 
   return {

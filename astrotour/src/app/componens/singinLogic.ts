@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 export const useSinginLogic = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -9,7 +9,7 @@ export const useSinginLogic = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { data: session } = useSession();
-  const router = useRouter(); 
+  const router = useRouter();
 
   const toggleForm = () => {
     setIsRegistering((prev) => !prev);
@@ -54,7 +54,19 @@ export const useSinginLogic = () => {
 
         setIsRegistering(false);
         setErrorMessage("");
-        alert("Sikeres regisztráció! Most már bejelentkezhetsz.");
+
+      
+        const loginResult = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+
+        if (loginResult?.ok) {
+          router.push("/"); 
+        } else {
+          setErrorMessage("Bejelentkezés sikertelen.");
+        }
       } else {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
           method: "POST",
@@ -78,6 +90,8 @@ export const useSinginLogic = () => {
           password,
         });
 
+        console.log(loginResult);
+
         if (loginResult?.ok) {
           router.push("/");
         } else {
@@ -91,7 +105,7 @@ export const useSinginLogic = () => {
 
   const handleLogout = () => {
     signOut();
-    router.push("/"); 
+    router.push("/");
   };
 
   return {

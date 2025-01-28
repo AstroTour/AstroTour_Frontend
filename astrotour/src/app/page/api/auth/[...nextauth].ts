@@ -4,10 +4,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "Bejelentkezés",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        password: { label: "Jelszó", type: "password" },
       },
       async authorize(credentials) {
         try {
@@ -24,7 +24,7 @@ export default NextAuth({
 
           if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.message || "Érvénytelen bejelentkezési adatok!");
+            throw new Error(errorData.message || "Hibás bejelentkezési adatok!");
           }
 
           const data = await res.json();
@@ -37,10 +37,11 @@ export default NextAuth({
               accessToken: data.access_token,
             };
           }
+
           return null;
         } catch (error) {
           console.error("Hitelesítési hiba:", error);
-          throw new Error("A bejelentkezés sikertelen. Kérjük, próbáld újra!");
+          throw new Error("Bejelentkezés sikertelen. Próbáld újra!");
         }
       },
     }),

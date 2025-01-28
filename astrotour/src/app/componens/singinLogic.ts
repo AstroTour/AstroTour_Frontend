@@ -30,7 +30,7 @@ export const useSinginLogic = () => {
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); 
+    event.preventDefault();
     if (!validateForm()) {
       return;
     }
@@ -55,7 +55,6 @@ export const useSinginLogic = () => {
         setErrorMessage("");
         alert("Sikeres regisztráció! Most már bejelentkezhetsz.");
       } else {
-        
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
           method: "POST",
           headers: {
@@ -72,7 +71,6 @@ export const useSinginLogic = () => {
 
         const data = await response.json();
 
-        
         signIn("credentials", {
           redirect: false,
           email: data.email,

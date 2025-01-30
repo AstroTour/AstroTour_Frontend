@@ -55,7 +55,6 @@ export const useSinginLogic = () => {
         setIsRegistering(false);
         setErrorMessage("");
 
-      
         const loginResult = await signIn("credentials", {
           redirect: false,
           email,

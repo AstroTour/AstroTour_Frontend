@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
- 
+
 export const useSinginLogic = () => {
   // Állapotok a bejelentkezési és regisztrációs adatok tárolására
   const [isRegistering, setIsRegistering] = useState(false);
@@ -9,13 +8,12 @@ export const useSinginLogic = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { data: session } = useSession(); // NextAuth session adatokat figyeli
   const router = useRouter();
 
   // Regisztráció és bejelentkezés közötti váltás
   const toggleForm = () => {
     setIsRegistering((prev) => !prev);
-    setErrorMessage("");
+    setErrorMessage(""); // Üzenet törlése
   };
 
   // Adatok validálása
@@ -35,31 +33,21 @@ export const useSinginLogic = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validateForm()) return;
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || "Érvénytelen bejelentkezési adatok.");
-        return;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.status === 200) {
+      // Mentse el a felhasználót a localStorage-ba
+      localStorage.setItem("username", email);
+      router.push("/"); // Navigálás a főoldalra
+    } else {
+      const errorData = await response.json();
+      if (errorData.message) {
+        setErrorMessage(errorData.message); // Backend hibaüzenet megjelenítése
       }
-      const data = await response.json();
-      const loginResult = await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password,
-      });
-      if (loginResult?.ok) {
-        router.push("/");
-        router.refresh(); // Session frissítés
-      } else {
-        setErrorMessage("Bejelentkezés sikertelen.");
-      }
-    } catch (error) {
-      setErrorMessage("Hiba történt. Próbáld újra később!");
     }
   };
 
@@ -67,33 +55,25 @@ export const useSinginLogic = () => {
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validateForm()) return;
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || "Regisztráció sikertelen.");
-        return;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password }),
+    });
+
+    if (response.status === 201) {
+      // Mentse el a felhasználót a localStorage-ba
+      localStorage.setItem("username", email);
+      router.push("/"); // Navigálás a főoldalra
+    } else {
+      const errorData = await response.json();
+      if (errorData.message) {
+        setErrorMessage(errorData.message); // Backend hibaüzenet megjelenítése
       }
-      setIsRegistering(false);
-      setErrorMessage("");
-      await handleLogin(event); // Regisztráció után automatikus bejelentkezés
-    } catch (error) {
-      setErrorMessage("Hiba történt. Próbáld újra később!");
     }
   };
 
-  // Kijelentkezés
-  const handleLogout = () => {
-    signOut();
-    router.push("/");
-  };
-
   return {
-    session,
     isRegistering,
     username,
     setUsername,
@@ -105,6 +85,5 @@ export const useSinginLogic = () => {
     toggleForm,
     handleLogin,
     handleRegister,
-    handleLogout,
   };
 };

@@ -7,17 +7,16 @@ import Mobilnav from './mobilnav';
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Figyeljük a localStorage-t, hogy automatikusan frissüljön az állapot
   useEffect(() => {
     const loggedInUser = localStorage.getItem("username");
-    if (loggedInUser) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+    setIsLoggedIn(!!loggedInUser); // Ha van mentett felhasználó, be van jelentkezve
+  }, []); // Csak egyszer fusson le, amikor a komponens betöltődik
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("username");
-    window.location.href = "/"; 
+    localStorage.removeItem("username"); // Távolítsuk el a felhasználót a localStorage-ból
+    setIsLoggedIn(false); // Állapot frissítése
+    window.location.href = "/"; // Főoldalra navigálás
   };
 
   return (

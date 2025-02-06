@@ -47,13 +47,6 @@ function Mobilnav() {
           </li>
           <li className="relative border-b border-white/30 pb-2 group">
             <a
-              href="registration/login"
-              className="text-white group-hover:text-sm duration-300 transform transition">
-              Bejelentkezés
-            </a>
-          </li>
-          <li className="relative border-b border-white/30 pb-2 group">
-            <a
               href="/timetables"
               className="text-white group-hover:text-sm duration-300 transform transition">
               Menetrendek

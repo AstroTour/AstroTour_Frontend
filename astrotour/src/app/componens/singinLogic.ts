@@ -40,9 +40,16 @@ export const useSinginLogic = () => {
     });
 
     if (response.status === 200) {
+      const data = await response.json();
       // Mentse el a felhasználót a localStorage-ba
       localStorage.setItem("username", email);
-      router.push("/"); // Navigálás a főoldalra
+      localStorage.setItem("role", data.role);
+      router.push("/");
+
+      window.location.reload(); // 🔹 AZONNALI FRISSÍTÉS
+
+      router.push("/");
+
     } else {
       const errorData = await response.json();
       if (errorData.message) {
@@ -65,6 +72,9 @@ export const useSinginLogic = () => {
       // Mentse el a felhasználót a localStorage-ba
       localStorage.setItem("username", email);
       router.push("/"); // Navigálás a főoldalra
+
+      window.location.reload(); // AZONNALI FRISSÍTÉS
+
     } else {
       const errorData = await response.json();
       if (errorData.message) {

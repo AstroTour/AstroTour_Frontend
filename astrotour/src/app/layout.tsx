@@ -29,7 +29,9 @@ export default function RootLayout({
         style={{ backgroundImage: "url('/galaxy.jpg')" }}>
         <main>
           <Navbar />
-          <CustomSessionProvider>{children}</CustomSessionProvider>
+          <CustomSessionProvider>
+            {children}
+          </CustomSessionProvider>
         </main>
       </body>
     </html>

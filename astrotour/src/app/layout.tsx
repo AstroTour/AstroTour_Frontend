@@ -28,8 +28,8 @@ export default function RootLayout({
       <body className="min-h-screen bg-no-repeat bg-cover bg-center"
         style={{ backgroundImage: "url('/galaxy.jpg')" }}>
         <main>
-          <Navbar />
           <CustomSessionProvider>
+            <Navbar />
             {children}
           </CustomSessionProvider>
         </main>

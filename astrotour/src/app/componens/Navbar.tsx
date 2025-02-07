@@ -1,39 +1,17 @@
+// app/componens/Navbar.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
 import HamburgerMenu from "./hamburger-spin";
 import Mobilnav from "./mobilnav";
 
 function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState("");
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const loggedInUser = localStorage.getItem("username");
-      const role = localStorage.getItem("role") || "";
-  
-      // Ha változás történt, egyszerre frissítjük az állapotokat
-      setIsLoggedIn(loggedInUser !== null);
-      setUserRole(role);
-    };
-  
-    checkAuth(); // Azonnali ellenőrzés
-  
-    window.addEventListener("storage", checkAuth);
-    return () => window.removeEventListener("storage", checkAuth);
-  }, []); // Üres dependency array -> csak egyszer fut le
-
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("role");
-
-    setIsLoggedIn(false);
-    setUserRole("");
-
-    window.dispatchEvent(new Event("storage")); // Kikényszerített frissítés
-    window.location.href = "/";
-  };
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
+  // Ha be van jelentkezve, a session.user.role tartalmazza a szerepet
+  const userRole = session?.user?.role || "";
 
   return (
     <header className="bg-cover bg-center">
@@ -46,45 +24,55 @@ function Navbar() {
 
         <div className="flex justify-center flex-grow">
           <div className="hidden md:block">
-            <Link href="/about" className="m-4">Rólunk</Link>
-            <Link href="/reservation" className="m-4">Foglalás</Link>
-            <Link href="/planets" className="m-4">Bolygók</Link>
+            <Link href="/about" className="m-4">
+              Rólunk
+            </Link>
+            <Link href="/reservation" className="m-4">
+              Foglalás
+            </Link>
+            <Link href="/planets" className="m-4">
+              Bolygók
+            </Link>
           </div>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2">
           {isLoggedIn ? (
             <>
-              <img
-                src="/user.png"
-                alt="Felhasználó"
-                width={40}
-                height={40}
-                className="mr-2"
+              <Image 
+              src="/user.png" 
+              alt="Felhasználó" 
+              width={40} 
+              height={40} 
               />
-
-              {/* 🔹 Admin ikon csak adminoknak */}
-              {(userRole === "admin" || userRole === "superadmin") && (
-                <Link href="/admin">
-                  <img
-                    src="/admin-icon.png"
+              
+              {(userRole === "admin" || userRole === "super-admin") && (
+                <a
+                  href="http://devsite.monvoie.com/admin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src="/admin.png"
                     alt="Admin Panel"
                     width={40}
                     height={40}
                     className="mr-2"
                   />
-                </Link>
+                </a>
               )}
-
               <button
-                onClick={handleLogout}
+                onClick={() => signOut()}
                 className="bg-red-500 text-white py-1 px-4 rounded-full hover:bg-red-600 transition"
               >
                 Kijelentkezés
               </button>
             </>
           ) : (
-            <Link href="/registration/login" className="m-4 flex justify-between rounded-xl border p-1">
+            <Link
+              href="/registration/login"
+              className="m-4 flex justify-between rounded-xl border p-1"
+            >
               Bejelentkezés
             </Link>
           )}

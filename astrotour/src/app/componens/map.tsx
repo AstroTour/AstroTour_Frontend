@@ -1,11 +1,10 @@
 import React from "react";
-import Planets from "./Planets"; // 🔹 Biztosítsd, hogy a fájl `Planets.tsx` és nagybetűvel van írva!
+import Planets from "./Planets"; // 🔹 Bolygók importálása
 
 const Map = () => {
-  console.log("Map komponens betöltődött!");
   return (
-    <div className="flex items-center justify-center h-screen bg-black">
-      <Planets />
+    <div className="relative w-full h-full flex items-center justify-center bg-transparent overflow-hidden">
+      <Planets /> {/* 🔹 A bolygók most már átlátszó konténerben lesznek */}
     </div>
   );
 };

@@ -11,7 +11,8 @@ function Navbar() {
   const { data: session } = useSession();
   const isLoggedIn = !!session;
   // Ha be van jelentkezve, a session.user.role tartalmazza a szerepet
-  const userRole = session?.user?.role || "";
+  const userRole = (session?.user as { role?: string })?.role || "";
+
 
   return (
     <header className="bg-cover bg-center">
@@ -45,7 +46,7 @@ function Navbar() {
               width={40} 
               height={40} 
               />
-              
+
               {(userRole === "admin" || userRole === "super-admin") && (
                 <a
                   href="http://devsite.monvoie.com/admin"

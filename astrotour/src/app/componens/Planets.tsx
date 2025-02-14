@@ -9,7 +9,7 @@ const planets = [
   { name: "Earth", size: 28, image: "/image/earth.png", distance: 150, duration: 7, eccentricity: 14 },
   { name: "Mars", size: 24, image: "/image/mars.png", distance: 180, duration: 9, eccentricity: 18 },
   { name: "Jupiter", size: 38, image: "/image/jupiter.png", distance: 220, duration: 12, eccentricity: 25 },
-  { name: "Saturn", size: 34, image: "/image/saturn.png", distance: 270, duration: 15, eccentricity: 30 },
+  { name: "Saturn", size: 34, image: "/image/saturnus.png", distance: 270, duration: 15, eccentricity: 30 },
   { name: "Uranus", size: 30, image: "/image/uranus.png", distance: 320, duration: 18, eccentricity: 35 },
   { name: "Neptune", size: 30, image: "/image/neptune.png", distance: 360, duration: 21, eccentricity: 40 },
   { name: "Pluto", size: 20, image: "/image/pluto.png", distance: 400, duration: 25, eccentricity: 45 },

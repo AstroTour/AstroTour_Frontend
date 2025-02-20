@@ -6,7 +6,7 @@ function page() {
     <div className='bg-transparent p-5 m-10 mt-5 max-w-full'>
       <div className='text-white rounded-xl bg-black/60 shadow-2xl p-10 max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto'>
         <p className='text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-white to-white'>
-          Bemutatkozás:</p>
+          Bemutatkozás</p>
         <p className='break-words p-2 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-white'>
           Üdvözlünk az AstroTour világában!
         </p>

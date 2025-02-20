@@ -95,6 +95,14 @@ const PageContainer = () => {
 
   return (
     <div className="container mx-auto p-10 relative z-0">
+      <div className="mb-8 flex justify-center">
+        <div className="relative">
+          <div className="absolute inset-0 bg-black/50 rounded-lg"></div>
+            <div className="px-6 py-3 relative z-10 rounded-lg shadow-lg text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-white to-purple-600">
+              Tájékoztatás
+            </div>
+          </div>
+        </div>
       <div className="flex flex-col gap-8 md:grid md:grid-cols-1 lg:grid-cols-2">
         {cards.map((card, index) => (
           <Page key={index} 

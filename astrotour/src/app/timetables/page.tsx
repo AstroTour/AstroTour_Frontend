@@ -1,26 +1,31 @@
+"use client";
 import React from "react";
-import FlightTable from "../componens/FlightTable";
-import Map from "../componens/map";
+import Head from "next/head";
+import FlightSchedule from "../componens/FlightTable";
+import Planets from "../componens/Planets";
 
 const Page = () => {
   return (
-    <div className="flex h-screen"> {/* 🔹 A teljes képernyőt kitöltő flex konténer */}
-      
-      {/* 🔹 Bal oldalon a menetrend (táblázat) */}
-      <div className="w-1/2 h-full flex items-center justify-center p-10">
-        <div className="w-full h-full bg-black/50 p-4 rounded-lg shadow-lg flex items-center justify-center">
-          <FlightTable />
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <div className="flex flex-col md:flex-row w-full min-h-screen">
+        {/* Járatok: Mobilon felül, nagy képernyőn bal oldalon */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-5">
+          <div className="w-full max-w-3xl bg-black/60 p-4 rounded-lg shadow-lg flex items-center justify-center">
+            <FlightSchedule />
+          </div>
+        </div>
+  
+        {/* Térkép: Mobilon alul, nagy képernyőn jobb oldalon */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-5">
+          <div className="w-full max-w-3xl bg-black/30 p-4 rounded-lg shadow-lg flex items-center justify-center">
+            <Planets />
+          </div>
         </div>
       </div>
-
-      {/* 🔹 Jobb oldalon a térkép */}
-      <div className="w-2/3 h-full flex items-center justify-center p-10">
-        <div className="w-full h-full bg-black/50 p-4 rounded-lg shadow-lg flex items-center justify-center">
-          <Map />
-        </div>
-      </div>
-
-    </div>
+    </>
   );
 };
 

@@ -32,7 +32,7 @@ const Signin = () => {
 
   return (
     <div className="flex justify-center items-center m-5">
-      <div className="relative w-96 bg-black bg-opacity-40 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
+      <div className="relative w-96 bg-black bg-opacity-60 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
         {isRegistering ? (
           // Regisztrációs űrlap
           <div className="p-8">

@@ -42,7 +42,7 @@ function Page() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row bg-transparent">
-      {/* Bal oldali animált kártya – hozzáadva bg-black bg-opacity-40 */}
+      {/* Bal oldali animált kártya */}
       <div className="md:w-1/2 flex items-center justify-center relative">
         <motion.div
           style={{ y: yTransform }}

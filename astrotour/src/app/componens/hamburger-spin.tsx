@@ -20,7 +20,7 @@ const HamburgerMenu = () => {
       </div>
 
       <div
-        className={`fixed top- right-0 w-64 h-auto backdrop-blur-sm shadow-lg border-l border-white/30 transform transition-transform duration-500 rounded-lg ${
+        className={`fixed top- right-0 w-64 h-auto backdrop-blur-sm shadow-lg border-l border-white/30 transform transition-transform duration-500 rounded-lg bg-black bg-opacity-50 ${
           isOpen ? "translate-x-0" : "translate-x-full"}`}>
 
         <ul className="flex flex-col p-4 space-y-4">

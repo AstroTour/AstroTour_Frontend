@@ -20,7 +20,7 @@ function Mobilnav() {
       </div>
 
       <div
-        className={`fixed top-50 right-0 w-64 h-auto backdrop-blur-sm shadow-lg border border-white/30 transform transition-transform duration-300 rounded-lg z-40 ${
+        className={`fixed top-50 right-0 w-64 h-auto backdrop-blur-sm shadow-lg border border-white/30 transform transition-transform duration-300 rounded-lg z-40 bg-black bg-opacity-50 ${
           isOpen ? "translate-x-0" : "translate-x-full"}`}>
 
         <ul className="flex flex-col p-4 space-y-4">

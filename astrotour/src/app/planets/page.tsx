@@ -2,13 +2,26 @@
 import React, { useState, useEffect } from 'react';
 import '../style/planet.css';
 
+// Alapértelmezett bolygó adatok – ezek a fetch előtt lesznek használva
+const defaultPlanets = [
+  { id: 1, name: "Merkúr", thumbnail: "/image/mercury.png", information: "Merkúr információ..." },
+  { id: 2, name: "Vénusz", thumbnail: "/image/venus.png", information: "Vénusz információ..." },
+  { id: 3, name: "Föld", thumbnail: "/image/earth.png", information: "Föld információ..." },
+  { id: 4, name: "Mars", thumbnail: "/image/mars.png", information: "Mars információ..." },
+  { id: 5, name: "Jupiter", thumbnail: "/image/jupiter.png", information: "Jupiter információ..." },
+  { id: 6, name: "Szaturnusz", thumbnail: "/image/saturn.png", information: "Szaturnusz információ..." },
+  { id: 7, name: "Uránusz", thumbnail: "/image/uranus.png", information: "Uránusz információ..." },
+  { id: 8, name: "Neptunusz", thumbnail: "/image/neptune.png", information: "Neptunusz információ..." },
+  { id: 9, name: "Plutó", thumbnail: "/image/pluto.png", information: "Plutó információ..." },
+];
+
 function Page() {
-  const [planets, setPlanets] = useState([]);
+  const [planets, setPlanets] = useState(defaultPlanets);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch kérés a backendhez
   useEffect(() => {
-    // 🔹 Fetch kérés a backendhez
     fetch('http://devsite.monvoie.com/api/planet')
       .then((response) => {
         if (!response.ok) {
@@ -17,6 +30,8 @@ function Page() {
         return response.json();
       })
       .then((data) => {
+        // Feltételezzük, hogy a backend ugyanolyan struktúrát ad vissza,
+        // mint a defaultPlanets, de tartalmazza az "information" mezőt
         setPlanets(data);
         setLoading(false);
       })
@@ -27,24 +42,21 @@ function Page() {
       });
   }, []);
 
-  // 🔹 Bolygó információ lekérése név alapján (magyar nevekkel)
-  const getPlanetInfo = (planetName: string) => {
+  // getPlanetInfo: visszaadja a megadott bolygó információját (magyar nevekkel)
+  const getPlanetInfo = (planetName) => {
     const planet = planets.find(
       (p) => p.name.toLowerCase() === planetName.toLowerCase()
     );
     return planet ? planet.information : '';
   };
 
-  // 🔹 Ha hiba történt, jelezzük
   if (error) {
     return <div className="error">Hiba történt: {error}</div>;
   }
 
-  // 🔹 Amíg az adatok betöltődnek, mutassunk egy töltésjelzőt
   if (loading) {
     return <div className="loading">Adatok betöltése...</div>;
   }
-
 
   return (
     <div>
@@ -159,7 +171,7 @@ function Page() {
               <p>{getPlanetInfo("Merkúr") || "Betöltés Merkúr infó..."}</p>
               <label htmlFor="readMercury">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -174,7 +186,7 @@ function Page() {
               <p>{getPlanetInfo("Vénusz") || "Betöltés Vénusz infó..."}</p>
               <label htmlFor="readVenus">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -194,7 +206,7 @@ function Page() {
               <p>{getPlanetInfo("Föld") || "Betöltés Föld infó..."}</p>
               <label htmlFor="readEarth">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -219,7 +231,7 @@ function Page() {
               <p>{getPlanetInfo("Mars") || "Betöltés Mars infó..."}</p>
               <label htmlFor="readMars">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -249,7 +261,7 @@ function Page() {
               <p>{getPlanetInfo("Jupiter") || "Betöltés Jupiter infó..."}</p>
               <label htmlFor="readJupiter">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -276,10 +288,10 @@ function Page() {
             <div className="planet_description saturn">
               <h2>Bolygó</h2>
               <h1>Szaturnusz</h1>
-              <p>{getPlanetInfo("Szaturnusz") || "Betöltés Szaturusz infó..."}</p>
+              <p>{getPlanetInfo("Szaturnusz") || "Betöltés Szaturnusz infó..."}</p>
               <label htmlFor="readSaturn">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -309,7 +321,7 @@ function Page() {
               <p>{getPlanetInfo("Uránusz") || "Betöltés Uránusz infó..."}</p>
               <label htmlFor="readUranus">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -339,7 +351,7 @@ function Page() {
               <p>{getPlanetInfo("Neptunusz") || "Betöltés Neptunusz infó..."}</p>
               <label htmlFor="readNeptune">
                 <a>
-                Olvass tovább<span></span>
+                  Olvass tovább<span></span>
                 </a>
               </label>
             </div>
@@ -363,7 +375,7 @@ function Page() {
         </div>
       </div>
 
-      {/* Alsó, nagy panelok – itt szintén a backendről érkező információt jelenítjük meg */}
+      {/* Alsó, nagy panelok – itt a backendről érkező információkat jelenítjük meg */}
       <input className="read" id="readMercury" name="mercuryRead" type="radio" />
       <label className="closeBig" htmlFor="closeMercury" />
       <input className="read" id="closeMercury" name="mercuryRead" type="radio" />

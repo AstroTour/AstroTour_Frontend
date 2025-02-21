@@ -22,7 +22,7 @@ export default function Home() {
           <img
             src="/rocket.png"
             alt="Űrhajó"
-            className="absolute animate-fly-through-space w-16 md:w-24 lg:w-30"
+            className="absolute animate-fly-through-space w-10 md:w-12 lg:w-16"
           />
         )}
       </div>

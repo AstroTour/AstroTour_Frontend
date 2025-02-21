@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
-// Bolygó adatok (Most már kisebb méretekkel!)
+// Bolygó adatok
 const planets = [
   { name: "Mercury", size: 20, image: "/image/mercury.png", distance: 80, duration: 3 },
   { name: "Venus", size: 24, image: "/image/venus.png", distance: 115, duration: 5 },
@@ -18,6 +18,25 @@ const planets = [
 const Planets = () => {
   const [angle, setAngle] = useState(0);
   const [sunRotation, setSunRotation] = useState(0);
+  const [screenSize, setScreenSize] = useState("large"); // 'small', 'medium', 'large'
+
+  // Figyeljük az ablak méretét és beállítjuk a megfelelő méretet
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setScreenSize("small"); // Mobil
+      } else if (window.innerWidth < 1024) {
+        setScreenSize("medium"); // Tablet
+      } else {
+        setScreenSize("large"); // Nagy kijelző
+      }
+    };
+
+    handleResize(); // Azonnali ellenőrzés
+    window.addEventListener("resize", handleResize);
+    
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,36 +47,45 @@ const Planets = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Méretek beállítása képernyőméret alapján
+  const getSizeMultiplier = () => {
+    if (screenSize === "small") return 0.4; // Mobil nézet
+    if (screenSize === "medium") return 0.6; // Tablet nézet
+    return 1; // Nagy képernyő
+  };
+
+  const sizeMultiplier = getSizeMultiplier();
+
   return (
     <div 
-      className="relative flex items-center justify-center w-full h-[400px] md:h-[600px] lg:h-[800px] overflow-hidden"
+      className="relative flex items-center justify-center w-full h-[300px] sm:h-[400px] md:h-[600px] lg:h-[800px] overflow-hidden"
       style={{
-        backgroundImage: "url('/image/stars.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Nap középen */}
       <div 
         className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        style={{ transform: `translate(-50%, -50%) rotate(${sunRotation}deg)` }}
+        style={{ 
+          transform: `translate(-50%, -50%) rotate(${sunRotation}deg)`,
+        }}
       >
         <Image 
           src="/image/sun.png" 
           alt="Sun" 
-          width={80}  
-          height={80}  
+          width={80 * sizeMultiplier}  // Méret csökkentése
+          height={80 * sizeMultiplier}  
           priority
           className="pointer-events-none"
         />
       </div>
 
-      {/* Bolygók mozgása */}
+      {/* Bolygók mozgása - Mobilon és tableten kisebbek */}
       {planets.map((planet) => {
         const currentAngle = (angle / (planet.duration * 10)) * Math.PI * 2; 
-        const x = Math.cos(currentAngle) * planet.distance;
-        const y = Math.sin(currentAngle) * (planet.distance / 2);
+        const x = Math.cos(currentAngle) * planet.distance * sizeMultiplier; // Kisebb pályák mobilon
+        const y = Math.sin(currentAngle) * (planet.distance / 2) * sizeMultiplier;
 
         return (
           <div
@@ -73,8 +101,8 @@ const Planets = () => {
             <Image 
               src={planet.image} 
               alt={planet.name} 
-              width={planet.size} 
-              height={planet.size} 
+              width={planet.size * sizeMultiplier}  // Kisebb bolygók mobilon
+              height={planet.size * sizeMultiplier} 
               priority
               className="pointer-events-none"
             />

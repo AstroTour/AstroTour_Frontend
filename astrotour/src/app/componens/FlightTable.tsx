@@ -9,9 +9,9 @@ const FlightTables = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch("http://devsite.monvoie.com/api/schedule"); // <-- API hívás
+        const response = await fetch("http://devsite.monvoie.com/api/schedule"); // API hívás
         if (!response.ok) {
-          throw new Error("Hálózati hiba történt.");
+          throw new Error("Hiba történt az adatok betöltésekor.");
         }
         const data = await response.json();
         setFlights(data);
@@ -51,16 +51,16 @@ const FlightTables = () => {
         {flights.map((flight, index) => (
           <div key={index} className="bg-black/70 text-white p-4 rounded-lg shadow-md border border-white/20">
             <div className="flex justify-between items-center">
-              <p className="text-lg font-semibold">🚀 {flight.flights_id}</p>
-              <span className={`text-sm px-3 py-1 rounded-lg ${flight.condition === 'Aktív' ? 'bg-green-500' : 'bg-red-500'}`}>
-                {flight.condition}
+              <p className="text-lg font-semibold">🚀 {flight.flight_number}</p>
+              <span className="text-sm px-3 py-1 rounded-lg bg-blue-500">
+                {flight["port"] ?? "Ismeretlen"} - {flight["planet"] ?? "Ismeretlen"}
               </span>
             </div>
             <div className="mt-2 border-t border-white/20 pt-2">
               <p>Indulás: <span className="font-semibold">{flight.departure_time}</span></p>
               <p>Érkezés: <span className="font-semibold">{flight.arrival_time}</span></p>
-              <p>Megy: <span className="font-semibold">{flight.goes_back ? "✅ Igen" : "❌ Nem"}</span></p>
-              <p>Jön: <span className="font-semibold">{flight.comes_back ? "✅ Igen" : "❌ Nem"}</span></p>
+              <p>Visszaindul: <span className="font-semibold">{flight.goes_back}</span></p>
+              <p>Visszaérkezik: <span className="font-semibold">{flight.comes_back}</span></p>
             </div>
           </div>
         ))}

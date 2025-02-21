@@ -4,7 +4,7 @@ import Image from "next/image";
 
 // Bolygó adatok
 const planets = [
-  { name: "Mercury", size: 20, image: "/image/mercury.png", distance: 80, duration: 3 },
+  { name: "Mercury", size: 20, image: "/image/mercury.png", distance: 85, duration: 3 },
   { name: "Venus", size: 24, image: "/image/venus.png", distance: 115, duration: 5 },
   { name: "Earth", size: 28, image: "/image/earth.png", distance: 150, duration: 7 },
   { name: "Mars", size: 24, image: "/image/mars.png", distance: 185, duration: 9 },

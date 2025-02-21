@@ -60,7 +60,7 @@ const Signin = () => {
               <div className="relative mb-6">
                 <input
                   type="email"
-                  placeholder="Emailcím"
+                  placeholder="E-mail"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -123,7 +123,7 @@ const Signin = () => {
               <div className="relative mb-6">
                 <input
                   type="email"
-                  placeholder="Emailcím"
+                  placeholder="E-mail"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

@@ -74,17 +74,17 @@ const Planets = () => {
         <Image 
           src="/image/sun.png" 
           alt="Sun" 
-          width={80 * sizeMultiplier}  // Méret csökkentése
+          width={80 * sizeMultiplier}
           height={80 * sizeMultiplier}  
           priority
           className="pointer-events-none"
         />
       </div>
 
-      {/* Bolygók mozgása - Mobilon és tableten kisebbek */}
+      {/* Bolygók mozgása */}
       {planets.map((planet) => {
         const currentAngle = (angle / (planet.duration * 10)) * Math.PI * 2; 
-        const x = Math.cos(currentAngle) * planet.distance * sizeMultiplier; // Kisebb pályák mobilon
+        const x = Math.cos(currentAngle) * planet.distance * sizeMultiplier;
         const y = Math.sin(currentAngle) * (planet.distance / 2) * sizeMultiplier;
 
         return (
@@ -101,7 +101,7 @@ const Planets = () => {
             <Image 
               src={planet.image} 
               alt={planet.name} 
-              width={planet.size * sizeMultiplier}  // Kisebb bolygók mobilon
+              width={planet.size * sizeMultiplier}
               height={planet.size * sizeMultiplier} 
               priority
               className="pointer-events-none"

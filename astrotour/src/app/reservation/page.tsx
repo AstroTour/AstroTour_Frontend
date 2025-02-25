@@ -4,15 +4,15 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
 const planets = [
-  { id: 1, name: "Mercury", image: "/image/mercury.png", thumbnail: "/image/mercury.png" },
-  { id: 2, name: "Venus", image: "/image/venus.png", thumbnail: "/image/venus.png" },
-  { id: 3, name: "Earth", image: "/image/earth.png", thumbnail: "/image/earth.png" },
+  { id: 1, name: "Merkúr", image: "/image/mercury.png", thumbnail: "/image/mercury.png" },
+  { id: 2, name: "Vénus", image: "/image/venus.png", thumbnail: "/image/venus.png" },
+  { id: 3, name: "Föld", image: "/image/earth.png", thumbnail: "/image/earth.png" },
   { id: 4, name: "Mars", image: "/image/mars.png", thumbnail: "/image/mars.png" },
   { id: 5, name: "Jupiter", image: "/image/jupiter.png", thumbnail: "/image/jupiter.png" },
-  { id: 6, name: "Saturn", image: "/image/saturnus.png", thumbnail: "/image/saturn.png" },
+  { id: 6, name: "Szaturnusz", image: "/image/saturnus.png", thumbnail: "/image/saturnus.png" },
   { id: 7, name: "Uranus", image: "/image/uranus.png", thumbnail: "/image/uranus.png" },
-  { id: 8, name: "Neptune", image: "/image/neptune.png", thumbnail: "/image/neptune.png" },
-  { id: 9, name: "Pluto", image: "/image/pluto.png", thumbnail: "/image/pluto.png" }
+  { id: 8, name: "Neptunusz", image: "/image/neptune.png", thumbnail: "/image/neptune.png" },
+  { id: 9, name: "Plutó", image: "/image/pluto.png", thumbnail: "/image/pluto.png" }
 ];
 
 function Page() {

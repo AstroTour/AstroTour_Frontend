@@ -1,4 +1,3 @@
-// app/componens/Navbar.tsx
 "use client";
 import React from "react";
 import Link from "next/link";
@@ -12,7 +11,6 @@ function Navbar() {
   const isLoggedIn = !!session;
   // Ha be van jelentkezve, a session.user.role tartalmazza a szerepet
   const userRole = (session?.user as { role?: string })?.role || "";
-
 
   return (
     <header className="bg-cover bg-center">
@@ -43,12 +41,15 @@ function Navbar() {
         <div className="flex items-center space-x-2">
           {isLoggedIn ? (
             <>
-              <Image 
-              src="/user.png" 
-              alt="Felhasználó" 
-              width={40} 
-              height={40} 
-              />
+              <Link href="/profilupdate">
+                <Image 
+                  src="/user.png" 
+                  alt="Felhasználó" 
+                  width={40} 
+                  height={40} 
+                  className="cursor-pointer"
+                />
+              </Link>
 
               {(userRole === "admin" || userRole === "super-admin") && (
                 <a

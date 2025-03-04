@@ -21,10 +21,27 @@ function Page() {
   const [schedules, setSchedules] = useState([]);
   const [selectedSchedule, setSelectedSchedule] = useState("");
   const [ticketType, setTicketType] = useState("Basic");
+  // seatType: true = Ablak mellett, false = Folyosó mellett
   const [seatType, setSeatType] = useState(false);
   const [message, setMessage] = useState("");
+  const [userId, setUserId] = useState(null);
 
-  // Görgetési animáció – hogy a bal oldal végiggördüljön
+  // Lekérjük a bejelentkezett felhasználó adatait a backendről
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const response = await fetch("http://devsite.monvoie.com/api/user");
+        if (!response.ok) throw new Error("Nem sikerült lekérni a felhasználói adatokat!");
+        const data = await response.json();
+        setUserId(data.id);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  // Görgetési animáció
   const { scrollYProgress } = useScroll();
   const yTransform = useTransform(scrollYProgress, [0, 1], ["0%", "200%"]);
 
@@ -63,15 +80,19 @@ function Page() {
 
   // API hívás: Foglalás elküldése a backendnek
   const handleReservation = async () => {
+    if (!userId) {
+      setMessage("Felhasználó azonosítás szükséges a foglaláshoz!");
+      return;
+    }
     try {
       const response = await fetch("http://devsite.monvoie.com/api/reservation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          planet_id: selectedPlanet.id,
+          user_id: userId,
           schedule_id: selectedSchedule,
           ticket_type: ticketType,
-          at_window: seatType,
+          seat_name: seatType ? "Ablak mellett" : "Folyosó mellett"
         })
       });
 
@@ -79,7 +100,7 @@ function Page() {
       if (response.ok) {
         setMessage("Sikeres foglalás! 🚀");
       } else {
-        setMessage(result.message || "Hiba történt a foglalás sorá!");
+        setMessage(result.message || "Hiba történt a foglalás során!");
       }
     } catch (error) {
       setMessage("Hiba történt a foglalás során!");
@@ -151,9 +172,9 @@ function Page() {
           </motion.div>
         </div>
 
-        {/* Jobb oldali tartalom – változatlan */}
+        {/* Jobb oldali tartalom */}
         <div className="md:w-1/2 p-8 mt-20 space-y-32 bg-transparent">
-          {/* Bolygó kiválasztása keret */}
+          {/* Bolygó kiválasztása */}
           <div className="bg-black bg-opacity-60 backdrop-blur-md rounded-2xl px-6 py-4 shadow-lg">
             <h2 className="text-3xl mb-4 font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-white to-white">Bolygó kiválasztása</h2>
             <div className="grid grid-cols-3 gap-8">
@@ -215,11 +236,23 @@ function Page() {
             <h2 className="text-3xl mb-6 font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-blue-600 to-white">Ülőhelyek</h2>
             <div className="flex gap-6">
               <label className="flex items-center gap-2">
-                <input type="radio" name="seat" className="form-radio" onChange={() => setSeatType(true)} checked={seatType === true} />
+                <input
+                  type="radio"
+                  name="seat"
+                  className="form-radio"
+                  onChange={() => setSeatType(true)}
+                  checked={seatType === true}
+                />
                 <span className="text-xl text-white">Ablak mellett</span>
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" name="seat" className="form-radio" onChange={() => setSeatType(false)} checked={seatType === false} />
+                <input
+                  type="radio"
+                  name="seat"
+                  className="form-radio"
+                  onChange={() => setSeatType(false)}
+                  checked={seatType === false}
+                />
                 <span className="text-xl text-white">Folyosó mellett</span>
               </label>
             </div>
@@ -232,7 +265,7 @@ function Page() {
         </div>
       </div>
 
-      {/* Teljes képernyős modal az üzenettel (siker/hiba) – a foglalás gomb mellett jelenik meg */}
+      {/* Teljes képernyős modal az üzenettel */}
       {message && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-black/80 p-8 rounded-2xl shadow-lg text-center">

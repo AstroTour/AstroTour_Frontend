@@ -157,123 +157,114 @@ function Page() {
     }
   };
 
-  // Egyszerű inline stílusok a modalhoz
-  const modalStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9999,
-  };
-
-  const modalContentStyle = {
-    background: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    minWidth: "300px",
-  };
-
   return (
-    <div>
-      <h2 className="text-white">Profil Frissítése</h2>
-
-      {/* Profilkép rész */}
-      <div className="flex items-center space-x-4">
-        <div className="flex flex-col items-center">
+    <div className="min-h-screen p-4">
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Bal oldali kártya: Nagy kép */}
+        <div className="bg-white p-6 rounded shadow-md flex-1">
+          <h3 className="text-xl font-bold mb-4">Profilkép</h3>
           {profileImage ? (
             <img
               src={profileImage}
               alt="Profil"
-              width={100}
-              height={100}
-              className="rounded-full"
+              className="w-full h-auto rounded"
             />
           ) : (
-            <div
-              style={{
-                width: "96px",
-                height: "96px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#ccc",
-                borderRadius: "50%",
-              }}
-            >
+            <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded">
               Nincs kép
             </div>
           )}
           <button
             type="button"
-            className="text-blue-500 mt-2"
             onClick={handleProfileImageEdit}
+            className="mt-4 text-blue-500"
           >
             Módosítás
           </button>
         </div>
-      </div>
 
-      {/* Felhasználónév rész */}
-      <div className="mt-4">
-        <label className="text-white">Felhasználónév: </label>
-        <span className="text-white ml-2">{username || "Nincs felhasználónév megadva"}</span>
-        <button
-          type="button"
-          className="text-blue-500 ml-2"
-          onClick={() => setIsUsernameEditing(true)}
-        >
-          Módosítás
-        </button>
-      </div>
-
-      {/* Email rész */}
-      <div className="mt-4">
-        <label className="text-white">Email: </label>
-        <span className="text-white ml-2">{email || "Nincs email megadva"}</span>
-        <button
-          type="button"
-          className="text-blue-500 ml-2"
-          onClick={() => setIsEmailEditing(true)}
-        >
-          Módosítás
-        </button>
-      </div>
-
-      {/* Jelszó rész */}
-      <div className="mt-4">
-        <label className="text-white">Jelszó: </label>
-        <span className="text-white ml-2"> ******** </span>
-        <button
-          type="button"
-          className="text-blue-500 ml-2"
-          onClick={() => setIsPasswordEditing(true)}
-        >
-          Módosítás
-        </button>
+        {/* Jobb oldali kártya: Profil adatok */}
+        <div className="bg-black bg-opacity-60 p-6 rounded shadow-md flex-1">
+          <h2 className="text-xl font-bold mb-4">Profil Frissítése</h2>
+          <div className="mb-4">
+            <label className="block text-gray-700">Felhasználónév:</label>
+            <div className="flex items-center mt-1">
+              <span className="text-gray-900 mr-4">
+                {username || "Nincs felhasználónév megadva"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsUsernameEditing(true)}
+                className="text-blue-500"
+              >
+                Módosítás
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Email:</label>
+            <div className="flex items-center mt-1">
+              <span className="text-gray-900 mr-4">
+                {email || "Nincs email megadva"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsEmailEditing(true)}
+                className="text-blue-500"
+              >
+                Módosítás
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Jelszó:</label>
+            <div className="flex items-center mt-1">
+              <span className="text-gray-900 mr-4">********</span>
+              <button
+                type="button"
+                onClick={() => setIsPasswordEditing(true)}
+                className="text-blue-500"
+              >
+                Módosítás
+              </button>
+            </div>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Mentés
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Email módosító modal */}
       {isEmailEditing && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
-            <h3>Email módosítás</h3>
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white p-5 rounded-lg min-w-[300px]">
+            <h3 className="text-lg font-bold">Email módosítás</h3>
             <input
               type="email"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              style={{ border: "1px solid #ccc", padding: "8px", width: "100%", marginTop: "8px" }}
+              className="border border-gray-300 p-2 w-full mt-2"
             />
-            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
-            <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-              <button onClick={() => setIsEmailEditing(false)} style={{ background: "red", color: "white", padding: "8px", marginRight: "8px" }}>
+            {emailError && (
+              <p className="text-red-500 mt-2">{emailError}</p>
+            )}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsEmailEditing(false)}
+                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
+              >
                 Mégse
               </button>
-              <button onClick={handleEmailSave} style={{ background: "blue", color: "white", padding: "8px" }}>
+              <button
+                onClick={handleEmailSave}
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+              >
                 OK
               </button>
             </div>
@@ -283,21 +274,29 @@ function Page() {
 
       {/* Felhasználónév módosító modal */}
       {isUsernameEditing && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
-            <h3>Felhasználónév módosítás</h3>
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white p-5 rounded-lg min-w-[300px]">
+            <h3 className="text-lg font-bold">Felhasználónév módosítás</h3>
             <input
               type="text"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
-              style={{ border: "1px solid #ccc", padding: "8px", width: "100%", marginTop: "8px" }}
+              className="border border-gray-300 p-2 w-full mt-2"
             />
-            {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
-            <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-              <button onClick={() => setIsUsernameEditing(false)} style={{ background: "red", color: "white", padding: "8px", marginRight: "8px" }}>
+            {usernameError && (
+              <p className="text-red-500 mt-2">{usernameError}</p>
+            )}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsUsernameEditing(false)}
+                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
+              >
                 Mégse
               </button>
-              <button onClick={handleUsernameSave} style={{ background: "blue", color: "white", padding: "8px" }}>
+              <button
+                onClick={handleUsernameSave}
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+              >
                 OK
               </button>
             </div>
@@ -307,28 +306,36 @@ function Page() {
 
       {/* Jelszó módosító modal */}
       {isPasswordEditing && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white p-5 rounded-lg min-w-[300px]">
             <input
               type="password"
               placeholder="Új jelszó"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
+              className="border border-gray-300 p-2 w-full"
             />
             <input
               type="password"
               placeholder="Új jelszó megerősítése"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              style={{ border: "1px solid #ccc", padding: "8px", width: "100%", marginTop: "8px" }}
+              className="border border-gray-300 p-2 w-full mt-2"
             />
-            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
-            <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-              <button onClick={() => setIsPasswordEditing(false)} style={{ background: "red", color: "white", padding: "8px", marginRight: "8px" }}>
+            {passwordError && (
+              <p className="text-red-500 mt-2">{passwordError}</p>
+            )}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsPasswordEditing(false)}
+                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
+              >
                 Mégse
               </button>
-              <button onClick={handlePasswordSave} style={{ background: "blue", color: "white", padding: "8px" }}>
+              <button
+                onClick={handlePasswordSave}
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+              >
                 OK
               </button>
             </div>
@@ -338,25 +345,31 @@ function Page() {
 
       {/* Profilkép módosító modal (kétoszlopos elrendezéssel) */}
       {isProfileImageEditing && (
-        <div style={modalStyle}>
-          <div style={{ ...modalContentStyle, width: "80%", maxWidth: "600px" }}>
-            <h3>Profilkép módosítás</h3>
-            <div style={{ display: "flex", marginTop: "16px" }}>
-              {/* Bal oldal: jelenlegi kép */}
-              <div style={{ flex: 1, textAlign: "center", paddingRight: "8px", borderRight: "1px solid #ccc" }}>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-white p-5 rounded-lg w-4/5 max-w-[600px]">
+            <h3 className="text-lg font-bold">Profilkép módosítás</h3>
+            <div className="flex mt-4">
+              {/* Bal oldal: Jelenlegi kép */}
+              <div className="flex-1 text-center pr-4 border-r border-gray-300">
                 <p>Jelenlegi kép:</p>
                 {profileImage ? (
-                  <img src={profileImage} alt="Jelenlegi profil" width={100} height={100} style={{ borderRadius: "50%" }} />
+                  <img
+                    src={profileImage}
+                    alt="Jelenlegi profil"
+                    width={100}
+                    height={100}
+                    className="rounded-full mx-auto"
+                  />
                 ) : (
-                  <div style={{ width: "96px", height: "96px", margin: "0 auto", backgroundColor: "#ccc", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto flex items-center justify-center">
                     Nincs kép
                   </div>
                 )}
               </div>
-              {/* Jobb oldal: ikonok */}
-              <div style={{ flex: 1, textAlign: "center", paddingLeft: "8px" }}>
+              {/* Jobb oldal: Ikonok */}
+              <div className="flex-1 text-center pl-4">
                 <p>Válassz új ikont:</p>
-                <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
+                <div className="flex justify-center flex-wrap gap-2 mt-2">
                   {defaultIcons.map((icon, index) => (
                     <img
                       key={index}
@@ -364,28 +377,24 @@ function Page() {
                       alt={`Ikon ${index}`}
                       width={50}
                       height={50}
-                      style={{ cursor: "pointer", border: "1px solid #ccc", borderRadius: "4px" }}
+                      className="cursor-pointer border border-gray-300 rounded"
                       onClick={() => handleIconSelect(icon)}
                     />
                   ))}
                 </div>
               </div>
             </div>
-            <div style={{ marginTop: "16px", textAlign: "right" }}>
-              <button onClick={() => setIsProfileImageEditing(false)} style={{ background: "red", color: "white", padding: "8px" }}>
+            <div className="mt-4 text-right">
+              <button
+                onClick={() => setIsProfileImageEditing(false)}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
                 Mégse
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Végső mentés gomb */}
-      <form onSubmit={handleSubmit} className="mt-4">
-        <button className="text-white mt-4" type="submit">
-          Mentés
-        </button>
-      </form>
     </div>
   );
 }

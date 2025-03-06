@@ -22,7 +22,7 @@ function Page() {
 
   // Fetch kérés a backendhez
   useEffect(() => {
-    fetch('http://devsite.monvoie.com/api/planet')
+    fetch('http://localhost:8000/api/planet')
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

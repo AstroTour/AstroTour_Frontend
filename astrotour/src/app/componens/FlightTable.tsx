@@ -9,7 +9,7 @@ const FlightTables = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch("http://devsite.monvoie.com/api/schedule"); // API hívás
+        const response = await fetch("http://localhost:8000/api/schedule"); // API hívás
         if (!response.ok) {
           throw new Error("Hiba történt az adatok betöltésekor.");
         }

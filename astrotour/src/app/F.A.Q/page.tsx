@@ -10,7 +10,7 @@ const FAQPage = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const response = await fetch("http://devsite.monvoie.com/api/faq");
+        const response = await fetch("http://localhost:8000/api/faq");
         if (!response.ok) {
           throw new Error("Hálózati hiba történt.");
         }

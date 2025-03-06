@@ -35,7 +35,7 @@ function Page() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const res = await fetch("http://devsite.monvoie.com/api/profile");
+        const res = await fetch("http://localhost:8000/api/profile");
         const data = await res.json();
         if (data.email) {
           setEmail(data.email);
@@ -114,7 +114,7 @@ function Page() {
     formData.append("image", iconUrl);
 
     try {
-      const res = await fetch("http://devsite.monvoie.com/api/profile", {
+      const res = await fetch("http://localhost:8000/api/profile", {
         method: "POST",
         body: formData,
       });
@@ -143,7 +143,7 @@ function Page() {
     formData.append("password", newPassword || password);
 
     try {
-      const res = await fetch("http://devsite.monvoie.com/api/profile", {
+      const res = await fetch("http://localhost:8000/api/profile", {
         method: "POST",
         body: formData,
       });

@@ -30,7 +30,7 @@ function Page() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const response = await fetch("http://devsite.monvoie.com/api/user");
+        const response = await fetch("http://localhost:8000/api/user");
         if (!response.ok) throw new Error("Nem sikerült lekérni a felhasználói adatokat!");
         const data = await response.json();
         setUserId(data.id);
@@ -66,7 +66,7 @@ function Page() {
   useEffect(() => {
     async function fetchSchedules() {
       try {
-        const response = await fetch(`http://devsite.monvoie.com/api/schedules-for-planet?planet_id=${selectedPlanet.id}`);
+        const response = await fetch(`http://localhost:8000/api/schedules-for-planet?planet_id=${selectedPlanet.id}`);
         if (!response.ok) throw new Error("Nem sikerült betölteni az adatokat");
         const data = await response.json();
         setSchedules(data);
@@ -85,7 +85,7 @@ function Page() {
       return;
     }
     try {
-      const response = await fetch("http://devsite.monvoie.com/api/reservation", {
+      const response = await fetch("http://localhost:8000/api/reservation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

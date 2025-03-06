@@ -40,7 +40,7 @@ const PageContainer = () => {
     const fetchProspectus = async () => {
       try {
         const response = await fetch(
-          "http://devsite.monvoie.com/api/prospectus");
+          "http://localhost:8000/api/prospectus");
         if (!response.ok) {
           throw new Error("Hálózati hiba történt.");
         }
@@ -51,7 +51,7 @@ const PageContainer = () => {
           title: item.title,
           content: item.information,
           image: item.picture
-            ? `http://devsite.monvoie.com/${item.picture.replace(/^\/+/, "")}`
+            ? `http://localhost:8000/${item.picture.replace(/^\/+/, "")}`
             : null,
         }));
 

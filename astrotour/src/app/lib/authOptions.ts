@@ -1,4 +1,3 @@
-// app/lib/authOptions.ts
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
@@ -11,41 +10,44 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          // Küldjük el a hitelesítési adatokat a backend-nek
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+          console.log("Bejelentkezési API hívás:", `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`);
+
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json", 
+              "Accept": "application/json" 
+            },
+            credentials: "include",
             body: JSON.stringify({
               email: credentials?.email,
               password: credentials?.password,
             }),
           });
-  
-          // Ellenőrizzük a válasz típusát
-          const contentType = res.headers.get("content-type");
-          if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Nem megfelelő szerver válasz!");
-          }
-  
-          if (!res.ok) {
-            throw new Error("Hibás bejelentkezési adatok!");
-          }
-  
-          // Válasz feldolgozása
+
           const data = await res.json();
-  
-          return data.user
-            ? {
-                id: data.user.id,
-                email: data.user.email,
-                name: data.user.username,
-                role: data.user.role, // itt kapjuk meg a role-t
-                accessToken: data.accessToken, // opcionális, ha az API visszaadja
-              }
-            : null;
+
+          if (!res.ok) {
+            console.error("Bejelentkezési hiba:", data);
+            throw new Error(data.message || "Hibás bejelentkezési adatok!");
+          }
+
+          if (!data.access_token) {
+            throw new Error("Hiányzó access token a válaszból!");
+          }
+
+          console.log("Sikeres bejelentkezés! Token:", data.access_token);
+
+          return {
+            id: data.user.id,
+            email: data.user.email,
+            name: data.user.name,
+            role: data.user.role,
+            accessToken: data.access_token,
+          };
         } catch (error) {
-          console.error("Bejelentkezési hiba:", error);
-          throw new Error("Bejelentkezési hiba!");
+          console.error("NextAuth authorize() hiba:", error);
+          return null;
         }
       },
     }),
@@ -56,7 +58,7 @@ export const authOptions = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.role = user.role; // átemeljük a role-t a tokenbe
+        token.role = user.role;
         token.accessToken = user.accessToken;
       }
       return token;
@@ -67,14 +69,17 @@ export const authOptions = {
           id: token.id,
           email: token.email,
           name: token.name,
-          role: token.role, // a session.user.role itt lesz elérhető
+          role: token.role,
           accessToken: token.accessToken,
         };
       }
       return session;
     },
   },
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.NEXTAUTH_SECRET,
-  pages: { signIn: "/signin" }, // Egyéni bejelentkezési oldal
+  pages: { signIn: "/signin" },
   debug: process.env.NODE_ENV === "development",
 };

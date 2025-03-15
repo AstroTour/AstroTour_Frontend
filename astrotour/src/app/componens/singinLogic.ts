@@ -33,24 +33,35 @@ export const useSinginLogic = () => {
     return true;
   };
 
+  // Laravel Sanctum CSRF cookie lekérése
+  const getCsrfToken = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+      method: "GET",
+      credentials: "include",
+    });
+  };
+
   // Bejelentkezési folyamat NextAuth signIn segítségével
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+  
+    await getCsrfToken(); // CSRF token lekérése
+  
     try {
       const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
+  
       if (result?.status === 200 && result.ok) {
         router.push("/");
       } else if (result?.error) {
         setError(result.error);
       }
     } catch (error) {
-      console.error(error);
-      
+      setError("Hiba történt a bejelentkezés során.");
     }
   };
 
@@ -58,18 +69,24 @@ export const useSinginLogic = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    await getCsrfToken(); // CSRF token lekérése
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, email, password }),
       });
+
       if (res.status === 201) {
         const result = await signIn("credentials", {
           redirect: false,
           email,
           password,
         });
+
         if (result?.status === 200 && result.ok) {
           router.push("/");
         } else if (result?.error) {
@@ -77,11 +94,10 @@ export const useSinginLogic = () => {
         }
       } else {
         const data = await res.json();
-        setError(data.message); // Backend hibaüzenet megjelenítése
+        setError(data.message || "Ismeretlen hiba történt.");
       }
     } catch (err) {
-      console.error(err);
-      
+      setError("Hiba történt a regisztráció során.");
     }
   };
 

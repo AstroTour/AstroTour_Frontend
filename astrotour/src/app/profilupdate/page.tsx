@@ -1,402 +1,258 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useProfileLogic } from "../componens/useProfileLogic";
+import Modal from "../componens/Modal";
+import Image from "next/image";
 
-function Page() {
-  // Eredeti adatok
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("********");
-  const [profileImage, setProfileImage] = useState(null);
+export default function ProfilPage() {
+  const { userData, error, session, fetchUserProfile } = useProfileLogic();
 
-  // Modal állapotok
-  const [isEmailEditing, setIsEmailEditing] = useState(false);
-  const [isUsernameEditing, setIsUsernameEditing] = useState(false);
-  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
-  const [isProfileImageEditing, setIsProfileImageEditing] = useState(false);
-
-  // Új értékek
-  const [newEmail, setNewEmail] = useState("");
-  const [newUsername, setNewUsername] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [editField, setEditField] = useState(null);
+  const [inputValue, setInputValue] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [pendingData, setPendingData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [changed, setChanged] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // ÚJ!
 
-  // Hibák
-  const [emailError, setEmailError] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  if (!userData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="w-24 h-24 animate-spin">
+          <Image
+            src="/rocket.png"
+            alt="load"
+            width={50}
+            height={50}
+            className="object-contain"
+          />
+        </div>
+        <p className="text-lg font-semibold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-white">
+          Betöltés...
+        </p>
+      </div>
+    );
+  }
 
-  // Statikus ikonok
-  const defaultIcons = [
-    "https://example.com/icons/icon1.png",
-    "https://example.com/icons/icon2.png",
-    "https://example.com/icons/icon3.png",
-  ];
-
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const res = await fetch("http://localhost:8000/api/profile");
-        const data = await res.json();
-        if (data.email) {
-          setEmail(data.email);
-          setNewEmail(data.email);
-        }
-        if (data.username) {
-          setUsername(data.username);
-          setNewUsername(data.username);
-        }
-        if (data.image) {
-          setProfileImage(data.image);
-        }
-      } catch (error) {
-        console.error("Hiba a profil betöltésekor:", error);
+  const handleModalSave = () => {
+    if (editField === "password") {
+      if (inputValue.length < 8 || inputValue !== confirmPassword) {
+        alert("Hibás jelszó!");
+        return;
       }
+      setPendingData({ ...pendingData, password: inputValue });
+    } else if (editField === "email") {
+      setPendingData({ ...pendingData, email: inputValue });
+    } else if (editField === "username") {
+      setPendingData({ ...pendingData, username: inputValue });
     }
-    fetchProfile();
-  }, []);
-
-  // Email módosítás validáció
-  const handleEmailSave = () => {
-    if (newEmail.trim() === "") {
-      setEmailError("Az email nem lehet üres!");
-      return;
-    }
-    if (!newEmail.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setEmailError("Helytelen e-mail formátum!");
-      return;
-    }
-    setEmail(newEmail);
-    setEmailError("");
-    setIsEmailEditing(false);
+    setChanged(true);
+    setEditField(null);
+    setInputValue("");
+    setConfirmPassword("");
   };
 
-  // Felhasználónév módosítás validáció
-  const handleUsernameSave = () => {
-    if (newUsername.trim() === "") {
-      setUsernameError("A felhasználónév nem lehet üres!");
-      return;
-    }
-    setUsername(newUsername);
-    setUsernameError("");
-    setIsUsernameEditing(false);
-  };
-
-  // Jelszó módosítás validáció
-  const handlePasswordSave = () => {
-    if (newPassword.trim() === "" || confirmPassword.trim() === "") {
-      setPasswordError("A jelszó nem lehet üres!");
-      return;
-    }
-    if (newPassword.length < 8) {
-      setPasswordError("A jelszónak legalább 8 karakter hosszúnak kell lennie!");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setPasswordError("A jelszavak nem egyeznek!");
-      return;
-    }
-    setPasswordError("");
-    setIsPasswordEditing(false);
-  };
-
-  // Profilkép módosító modal megnyitása
-  const handleProfileImageEdit = () => {
-    console.log("Profilkép módosító modal megnyitása");
-    setIsProfileImageEditing(true);
-  };
-
-  // Ikon kiválasztása
-  const handleIconSelect = async (iconUrl) => {
-    setProfileImage(iconUrl);
-    setIsProfileImageEditing(false);
-
-    const formData = new FormData();
-    formData.append("image", iconUrl);
-
+  const handleFinalSave = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/profile", {
+      const formData = new FormData();
+      if (pendingData.username) formData.append("username", pendingData.username);
+      if (pendingData.email) formData.append("email", pendingData.email);
+      if (pendingData.password) formData.append("password", pendingData.password);
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/update`, {
         method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${session.user.accessToken}`,
+        },
         body: formData,
       });
-      const data = await res.json();
-      console.log("Profilkép frissítve:", data);
-    } catch (error) {
-      console.error("Hiba a profilkép frissítésekor:", error);
-    }
-  };
 
-  // Teljes profil frissítése
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (newEmail.trim() === "" || newUsername.trim() === "") {
-      alert("Az email és felhasználónév nem lehet üres!");
-      return;
-    }
-    if (newPassword && (newPassword.length < 8 || newPassword !== confirmPassword)) {
-      alert("A jelszónak legalább 8 karakternek kell lennie és a jelszavaknak egyezniük kell!");
-      return;
-    }
+      if (!res.ok) {
+        alert("Hiba a mentésnél!");
+        return;
+      }
 
-    const formData = new FormData();
-    formData.append("email", newEmail);
-    formData.append("username", newUsername);
-    formData.append("password", newPassword || password);
-
-    try {
-      const res = await fetch("http://localhost:8000/api/profile", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      console.log("Profil frissítve:", data);
-      setEmail(newEmail);
-      setUsername(newUsername);
-      setPassword(newPassword ? "********" : password);
-    } catch (error) {
-      console.error("Hiba a profil frissítésekor:", error);
+      await fetchUserProfile();
+      setPendingData({ username: "", email: "", password: "" });
+      setChanged(false);
+      setShowSuccessModal(true); // Sikeres modal megnyitása!
+    } catch (err) {
+      alert("Mentési hiba!");
     }
   };
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Bal oldali kártya: Nagy kép */}
-        <div className="bg-white p-6 rounded shadow-md flex-1">
-          <h3 className="text-xl font-bold mb-4">Profilkép</h3>
-          {profileImage ? (
-            <img
-              src={profileImage}
-              alt="Profil"
-              className="w-full h-auto rounded"
-            />
-          ) : (
-            <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded">
-              Nincs kép
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={handleProfileImageEdit}
-            className="mt-4 text-blue-500"
-          >
-            Módosítás
-          </button>
-        </div>
-
-        {/* Jobb oldali kártya: Profil adatok */}
-        <div className="bg-black bg-opacity-60 p-6 rounded shadow-md flex-1">
-          <h2 className="text-xl font-bold mb-4">Profil Frissítése</h2>
-          <div className="mb-4">
-            <label className="block text-gray-700">Felhasználónév:</label>
-            <div className="flex items-center mt-1">
-              <span className="text-gray-900 mr-4">
-                {username || "Nincs felhasználónév megadva"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsUsernameEditing(true)}
-                className="text-blue-500"
-              >
-                Módosítás
-              </button>
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Email:</label>
-            <div className="flex items-center mt-1">
-              <span className="text-gray-900 mr-4">
-                {email || "Nincs email megadva"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsEmailEditing(true)}
-                className="text-blue-500"
-              >
-                Módosítás
-              </button>
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Jelszó:</label>
-            <div className="flex items-center mt-1">
-              <span className="text-gray-900 mr-4">********</span>
-              <button
-                type="button"
-                onClick={() => setIsPasswordEditing(true)}
-                className="text-blue-500"
-              >
-                Módosítás
-              </button>
-            </div>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Mentés
-            </button>
-          </form>
-        </div>
+    <div className="min-h-screen p-6 flex flex-col md:flex-row gap-6 text-white">
+      {/* BAL OLDALI KÁRTYA */}
+      <div className="bg-black bg-opacity-70 p-6 rounded-3xl shadow-md flex-1 flex flex-col items-center justify-center">
+        <h3 className="text-xl mb-4">Profilkép</h3>
+        <img
+          src={userData?.profile_image ? `${process.env.NEXT_PUBLIC_API_URL}/${userData.profile_image}` : '/images/default.png'}
+          alt="Profilkép"
+          className="w-32 h-32 rounded-full mb-4"
+        />
+        <button
+          onClick={() => setIsImageModalOpen(true)}
+          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
+          Módosítás
+        </button>
       </div>
 
-      {/* Email módosító modal */}
-      {isEmailEditing && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg min-w-[300px]">
-            <h3 className="text-lg font-bold">Email módosítás</h3>
-            <input
-              type="email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              className="border border-gray-300 p-2 w-full mt-2"
-            />
-            {emailError && (
-              <p className="text-red-500 mt-2">{emailError}</p>
-            )}
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setIsEmailEditing(false)}
-                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
-              >
-                Mégse
-              </button>
-              <button
-                onClick={handleEmailSave}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                OK
-              </button>
-            </div>
+      {/* JOBB OLDALI KÁRTYA */}
+      <div className="bg-black bg-opacity-70 p-8 rounded-3xl shadow-md flex-1 space-y-6">
+        <h3 className="text-xl mb-4">Profil adatok</h3>
+
+        <div className="space-y-6 divide-y divide-gray-500/50">
+          <div className="pt-4">
+            <strong>Felhasználónév:</strong> {pendingData.username || userData.username}
+            <button
+              onClick={() => {
+                setEditField("username");
+                setInputValue(userData.username);
+              }}
+              className="ml-4 text-blue-400">
+              Módosít
+            </button>
+          </div>
+
+          <div className="pt-4">
+            <strong>Email:</strong> {pendingData.email || userData.email}
+            <button
+              onClick={() => {
+                setEditField("email");
+                setInputValue(userData.email);
+              }}
+              className="ml-4 text-blue-400">
+              Módosít
+            </button>
+          </div>
+
+          <div className="pt-4">
+            <strong>Jelszó:</strong> ********
+            <button
+              onClick={() => setEditField("password")}
+              className="ml-4 text-blue-400">
+              Módosít
+            </button>
           </div>
         </div>
-      )}
 
-      {/* Felhasználónév módosító modal */}
-      {isUsernameEditing && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg min-w-[300px]">
-            <h3 className="text-lg font-bold">Felhasználónév módosítás</h3>
-            <input
-              type="text"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              className="border border-gray-300 p-2 w-full mt-2"
-            />
-            {usernameError && (
-              <p className="text-red-500 mt-2">{usernameError}</p>
-            )}
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setIsUsernameEditing(false)}
-                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
-              >
-                Mégse
-              </button>
-              <button
-                onClick={handleUsernameSave}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        {changed && (
+          <button
+            onClick={handleFinalSave}
+            className="mt-6 bg-green-600 px-6 py-2 rounded-lg hover:bg-green-700">
+            Mentés
+          </button>
+        )}
+      </div>
 
-      {/* Jelszó módosító modal */}
-      {isPasswordEditing && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg min-w-[300px]">
-            <input
-              type="password"
-              placeholder="Új jelszó"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="border border-gray-300 p-2 w-full"
-            />
-            <input
-              type="password"
-              placeholder="Új jelszó megerősítése"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="border border-gray-300 p-2 w-full mt-2"
-            />
-            {passwordError && (
-              <p className="text-red-500 mt-2">{passwordError}</p>
-            )}
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setIsPasswordEditing(false)}
-                className="bg-red-500 text-white px-3 py-1 mr-2 rounded"
-              >
-                Mégse
-              </button>
-              <button
-                onClick={handlePasswordSave}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Profilkép módosító modal (kétoszlopos elrendezéssel) */}
-      {isProfileImageEditing && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg w-4/5 max-w-[600px]">
-            <h3 className="text-lg font-bold">Profilkép módosítás</h3>
-            <div className="flex mt-4">
-              {/* Bal oldal: Jelenlegi kép */}
-              <div className="flex-1 text-center pr-4 border-r border-gray-300">
-                <p>Jelenlegi kép:</p>
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="Jelenlegi profil"
-                    width={100}
-                    height={100}
-                    className="rounded-full mx-auto"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto flex items-center justify-center">
-                    Nincs kép
-                  </div>
-                )}
+      {/* Modal - Username, Email, Password */}
+      {editField && (
+        <Modal
+          title={
+            editField === "password"
+              ? "Jelszó módosítása"
+              : editField === "email"
+              ? "Email módosítása"
+              : "Felhasználónév módosítása"
+          }
+          onClose={() => {
+            setEditField(null);
+            setInputValue("");
+            setConfirmPassword("");
+          }}
+        >
+          {editField === "password" ? (
+            <>
+              <input
+                type="password"
+                placeholder="Új jelszó"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="bg-transparent border border-gray-400 text-white p-2 w-full mb-2 rounded focus:outline-none"
+              />
+              <input
+                type="password"
+                placeholder="Jelszó megerősítése"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-transparent border border-gray-400 text-white p-2 w-full mb-4 rounded focus:outline-none"
+              />
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => {
+                    setEditField(null);
+                    setInputValue("");
+                    setConfirmPassword("");
+                  }}
+                  className="bg-red-500 px-4 py-1 rounded hover:bg-red-600">
+                  Mégse
+                </button>
+                <button
+                  onClick={handleModalSave}
+                  className="bg-green-500 px-4 py-1 rounded hover:bg-green-600">
+                  Mentés
+                </button>
               </div>
-              {/* Jobb oldal: Ikonok */}
-              <div className="flex-1 text-center pl-4">
-                <p>Válassz új ikont:</p>
-                <div className="flex justify-center flex-wrap gap-2 mt-2">
-                  {defaultIcons.map((icon, index) => (
-                    <img
-                      key={index}
-                      src={icon}
-                      alt={`Ikon ${index}`}
-                      width={50}
-                      height={50}
-                      className="cursor-pointer border border-gray-300 rounded"
-                      onClick={() => handleIconSelect(icon)}
-                    />
-                  ))}
-                </div>
+            </>
+          ) : (
+            <>
+              <input
+                type={editField === "email" ? "email" : "text"}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="bg-transparent border border-gray-400 text-white p-2 w-full mb-4 rounded focus:outline-none"
+              />
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => {
+                    setEditField(null);
+                    setInputValue("");
+                  }}
+                  className="bg-red-500 px-4 py-1 rounded hover:bg-red-600">
+                  Mégse
+                </button>
+                <button
+                  onClick={handleModalSave}
+                  className="bg-green-500 px-4 py-1 rounded hover:bg-green-600">
+                  Mentés
+                </button>
               </div>
-            </div>
-            <div className="mt-4 text-right">
-              <button
-                onClick={() => setIsProfileImageEditing(false)}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Mégse
-              </button>
-            </div>
+            </>
+          )}
+        </Modal>
+      )}
+
+      {/* Modal - Profilkép */}
+      {isImageModalOpen && (
+        <Modal
+          title="Profilkép módosítása"
+          onClose={() => setIsImageModalOpen(false)}>
+        </Modal>
+      )}
+
+      {/* Modal - Sikeres mentés */}
+      {showSuccessModal && (
+        <Modal
+          title="Sikeres mentés!"
+          onClose={() => setShowSuccessModal(false)}
+        >
+          <p className="mb-4">A profil adataid sikeresen frissítve lettek. 🚀</p>
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="bg-green-500 px-4 py-1 rounded hover:bg-green-600"
+            >
+              OK
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
 }
-
-export default Page;

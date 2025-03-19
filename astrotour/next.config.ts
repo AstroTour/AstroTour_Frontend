@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+
+  // Képek configja marad változatlan
   images: {
     remotePatterns: [
       {
         protocol: "http",
         hostname: "localhost",
-        port: "8000", // A Next.js támogatja a port megadását külön
+        port: "8000",
         pathname: "/pictures/**",
       },
       {

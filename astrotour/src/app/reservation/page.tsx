@@ -1,7 +1,9 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import { useReservationLogic } from "../componens/useReservationLogic";
 
 const planets = [
   { id: 1, name: "Merkúr", image: "/image/mercury.png", thumbnail: "/image/mercury.png" },
@@ -10,38 +12,26 @@ const planets = [
   { id: 4, name: "Mars", image: "/image/mars.png", thumbnail: "/image/mars.png" },
   { id: 5, name: "Jupiter", image: "/image/jupiter.png", thumbnail: "/image/jupiter.png" },
   { id: 6, name: "Szaturnusz", image: "/image/saturnus.png", thumbnail: "/image/saturnus.png" },
-  { id: 7, name: "Uranus", image: "/image/uranus.png", thumbnail: "/image/uranus.png" },
+  { id: 7, name: "Uránusz", image: "/image/uranus.png", thumbnail: "/image/uranus.png" },
   { id: 8, name: "Neptunusz", image: "/image/neptune.png", thumbnail: "/image/neptune.png" },
-  { id: 9, name: "Plutó", image: "/image/pluto.png", thumbnail: "/image/pluto.png" }
+  { id: 9, name: "Plútó", image: "/image/pluto.png", thumbnail: "/image/pluto.png" }
 ];
 
 function Page() {
   const [selectedPlanet, setSelectedPlanet] = useState(planets[0]);
-  const [showShip, setShowShip] = useState(false);
-  const [schedules, setSchedules] = useState([]);
-  const [selectedSchedule, setSelectedSchedule] = useState("");
-  const [ticketType, setTicketType] = useState("Basic");
-  // seatType: true = Ablak mellett, false = Folyosó mellett
+  const [ticketType, setTicketType] = useState("Alap");
   const [seatType, setSeatType] = useState(false);
-  const [message, setMessage] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [showShip, setShowShip] = useState(false);
 
-  // Lekérjük a bejelentkezett felhasználó adatait a backendről
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const response = await fetch("http://localhost:8000/api/user");
-        if (!response.ok) throw new Error("Nem sikerült lekérni a felhasználói adatokat!");
-        const data = await response.json();
-        setUserId(data.id);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchUser();
-  }, []);
+  const {
+    schedules,
+    selectedSchedule,
+    setSelectedSchedule,
+    message,
+    setMessage,
+    handleReservation
+  } = useReservationLogic(selectedPlanet.id, seatType, ticketType);
 
-  // Görgetési animáció
   const { scrollYProgress } = useScroll();
   const yTransform = useTransform(scrollYProgress, [0, 1], ["0%", "200%"]);
 
@@ -50,62 +40,14 @@ function Page() {
       const packagesSection = document.getElementById("packages");
       if (packagesSection) {
         const rect = packagesSection.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.5) {
-          setShowShip(true);
-        } else {
-          setShowShip(false);
-        }
+        setShowShip(rect.top < window.innerHeight * 0.5);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // API lekérés: Indulási időpontok a backendből a kiválasztott bolygóhoz
-  useEffect(() => {
-    async function fetchSchedules() {
-      try {
-        const response = await fetch(`http://localhost:8000/api/schedules-for-planet?planet_id=${selectedPlanet.id}`);
-        if (!response.ok) throw new Error("Nem sikerült betölteni az adatokat");
-        const data = await response.json();
-        setSchedules(data);
-        setSelectedSchedule(data.length > 0 ? data[0].id : "");
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchSchedules();
-  }, [selectedPlanet]);
 
-  // API hívás: Foglalás elküldése a backendnek
-  const handleReservation = async () => {
-    if (!userId) {
-      setMessage("Felhasználó azonosítás szükséges a foglaláshoz!");
-      return;
-    }
-    try {
-      const response = await fetch("http://localhost:8000/api/reservation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          schedule_id: selectedSchedule,
-          ticket_type: ticketType,
-          seat_name: seatType ? "Ablak mellett" : "Folyosó mellett"
-        })
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        setMessage("Sikeres foglalás! 🚀");
-      } else {
-        setMessage(result.message || "Hiba történt a foglalás során!");
-      }
-    } catch (error) {
-      setMessage("Hiba történt a foglalás során!");
-    }
-  };
 
   return (
     <>
@@ -221,15 +163,30 @@ function Page() {
             <h2 className="text-3xl mb-6 font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-white">Csomagok</h2>
             <div className="flex gap-6">
               <label className="flex items-center gap-2">
-                <input type="radio" name="package" className="form-radio" />
+                <input
+                  type="radio"
+                  name="package"
+                  className="form-radio"
+                  value="Alap"
+                  onChange={(e) => setTicketType(e.target.value)}
+                  checked={ticketType === "Alap"}
+                />
                 <span className="text-xl text-white">Alap</span>
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" name="package" className="form-radio" />
+                <input
+                  type="radio"
+                  name="package"
+                  className="form-radio"
+                  value="V.I.P"
+                  onChange={(e) => setTicketType(e.target.value)}
+                  checked={ticketType === "V.I.P"}
+                />
                 <span className="text-xl text-white">V.I.P</span>
               </label>
             </div>
           </section>
+
 
           {/* Ülőhelyek szekció */}
           <section className="bg-black bg-opacity-60 backdrop-blur-md rounded-2xl px-8 py-6 shadow-lg">

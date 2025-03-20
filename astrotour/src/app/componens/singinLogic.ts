@@ -35,11 +35,11 @@ export const useSinginLogic = () => {
 
   // Laravel Sanctum CSRF cookie lekérése
   const getCsrfToken = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      method: "GET",
-      credentials: "include",
-    });
-  };
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+    method: "GET",
+    credentials: "include",
+  });
+};
 
   // Bejelentkezési folyamat NextAuth signIn segítségével
   const handleLogin = async (e: React.FormEvent) => {

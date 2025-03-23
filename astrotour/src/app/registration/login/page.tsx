@@ -17,24 +17,22 @@ const Signin = () => {
     toggleForm,
     handleLogin,
     handleRegister,
-    session,
+    isAuthenticated,
   } = useSinginLogic();
 
   const router = useRouter();
 
-  // useEffect-ben végezzük az átirányítást, ha session létezik
   useEffect(() => {
-    if (session) {
+    if (isAuthenticated) {
       router.push("/");
     }
-  }, [session, router]);
+  }, [isAuthenticated, router]);
 
 
   return (
     <div className="flex justify-center items-center m-5">
       <div className="relative w-96 bg-black bg-opacity-60 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg overflow-hidden transition-all duration-300">
         {isRegistering ? (
-          // Regisztrációs űrlap
           <div className="p-8">
             <h1 className="text-2xl font-bold text-white text-center mb-6">
               Regisztráció
@@ -92,9 +90,7 @@ const Signin = () => {
                 />
               </div>
               {error && (
-                <p className="text-red-500 text-sm text-center mb-4">
-                  {error}
-                </p>
+                <p className="text-red-500 text-sm text-center mb-4">{error}</p>
               )}
               <button
                 type="submit"
@@ -114,7 +110,6 @@ const Signin = () => {
             </p>
           </div>
         ) : (
-          // Bejelentkezési űrlap
           <div className="p-8">
             <h1 className="text-2xl font-bold text-white text-center mb-6">
               Bejelentkezés
@@ -155,9 +150,7 @@ const Signin = () => {
                 />
               </div>
               {error && (
-                <p className="text-red-500 text-sm text-center mb-4">
-                  {error}
-                </p>
+                <p className="text-red-500 text-sm text-center mb-4">{error}</p>
               )}
               <button
                 type="submit"

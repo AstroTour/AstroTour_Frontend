@@ -2,15 +2,15 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
 import HamburgerMenu from "./hamburger-spin";
 import Mobilnav from "./mobilnav";
+import { useUserData } from "./useUserData";
 
 function Navbar() {
-  const { data: session } = useSession();
-  const isLoggedIn = !!session;
-  // Ha be van jelentkezve, a session.user.role tartalmazza a szerepet
-  const userRole = (session?.user as { role?: string })?.role || "";
+  const { user } = useUserData();
+
+  const isLoggedIn = !!user;
+  const userRole = user?.role || "";
 
   return (
     <header className="bg-cover bg-center">
@@ -66,11 +66,15 @@ function Navbar() {
                   />
                 </a>
               )}
-              <button
-                onClick={() => signOut()}
-                className="bg-red-500 text-white py-1 px-4 rounded-full hover:bg-red-600 transition">
-                Kijelentkezés
-              </button>
+
+              {/* Kijelentkezés: Laravel logout */}
+              <form method="POST" action={`${process.env.NEXT_PUBLIC_API_URL}/logout`}>
+                <button
+                  type="submit"
+                  className="bg-red-500 text-white py-1 px-4 rounded-full hover:bg-red-600 transition">
+                  Kijelentkezés
+                </button>
+              </form>
             </>
           ) : (
             <Link

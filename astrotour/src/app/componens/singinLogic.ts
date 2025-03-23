@@ -1,26 +1,22 @@
 "use client";
-import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export const useSinginLogic = () => {
-  const { data: session } = useSession();
   const router = useRouter();
 
-  // Állapotok a bejelentkezési és regisztrációs adatok tárolására
   const [isRegistering, setIsRegistering] = useState(false);
-  const [username, setUsername] = useState(""); // Csak regisztrációhoz
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Regisztráció és bejelentkezés közötti váltás
   const toggleForm = () => {
     setError("");
     setIsRegistering((prev) => !prev);
   };
 
-  // Adatok validálása
   const validateForm = () => {
     if (!email || !email.includes("@")) {
       setError("Érvénytelen email cím.");
@@ -33,73 +29,94 @@ export const useSinginLogic = () => {
     return true;
   };
 
-  // Laravel Sanctum CSRF cookie lekérése
   const getCsrfToken = async () => {
-  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-    method: "GET",
-    credentials: "include",
-  });
-};
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+      method: "GET",
+      credentials: "include",
+    });
+  };
 
-  // Bejelentkezési folyamat NextAuth signIn segítségével
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
-    await getCsrfToken(); // CSRF token lekérése
-  
+
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
+      // CSRF token szükséges!
+      await getCsrfToken();
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
       });
-  
-      if (result?.status === 200 && result.ok) {
+
+      if (res.status === 200) {
+        const data = await res.json();
+        console.log("Sikeres login, user:", data.user);
+        setIsAuthenticated(true);
         router.push("/");
-      } else if (result?.error) {
-        setError(result.error);
+      } else {
+        const data = await res.json();
+        setError(data.message || "Hibás bejelentkezés!");
       }
-    } catch (error) {
+    } catch (err) {
       setError("Hiba történt a bejelentkezés során.");
     }
   };
 
-  // Regisztrációs folyamat: API hívás a backend regisztrációs végpontjára, majd automatikus bejelentkezés
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    await getCsrfToken(); // CSRF token lekérése
+    await getCsrfToken();
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         credentials: "include",
         body: JSON.stringify({ username, email, password }),
       });
 
       if (res.status === 201) {
-        const result = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
-        });
-
-        if (result?.status === 200 && result.ok) {
-          router.push("/");
-        } else if (result?.error) {
-          setError(result.error);
-        }
+        // Automatikus login regisztráció után
+        await handleLogin(e);
       } else {
         const data = await res.json();
-        setError(data.message || "Ismeretlen hiba történt.");
+        setError(data.message || "Hiba a regisztráció során.");
       }
     } catch (err) {
-      setError("Hiba történt a regisztráció során.");
+      setError("Hiba történt.");
     }
   };
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (err) {
+      setIsAuthenticated(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   return {
     isRegistering,
@@ -113,6 +130,6 @@ export const useSinginLogic = () => {
     toggleForm,
     handleLogin,
     handleRegister,
-    session,
+    isAuthenticated,
   };
 };

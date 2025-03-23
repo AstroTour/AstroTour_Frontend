@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat } from 'next/font/google';
 import Navbar from "./componens/Navbar";
-import CustomSessionProvider from "./componens/sessionprovider";
+
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -28,10 +28,8 @@ export default function RootLayout({
       <body className="min-h-screen bg-no-repeat bg-cover bg-center"
         style={{ backgroundImage: "url('/galaxy.jpg')" }}>
         <main>
-          <CustomSessionProvider>
             <Navbar />
             {children}
-          </CustomSessionProvider>
         </main>
       </body>
     </html>

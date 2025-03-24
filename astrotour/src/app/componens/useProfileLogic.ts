@@ -1,10 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 
 export const useProfileLogic = () => {
-  const { data: session, status } = useSession(); // FONTOS: status kell!
-  const [userData, setUserData] = useState<{ name: string; email: string } | null>(null);
+  const [userData, setUserData] = useState<{ username: string; email: string } | null>(null);
   const [error, setError] = useState("");
 
   const getCsrfToken = async () => {
@@ -18,17 +16,9 @@ export const useProfileLogic = () => {
     try {
       await getCsrfToken();
 
-      if (!session?.user?.accessToken) {
-        setError("Nincs token! Jelentkezz be újra.");
-        return;
-      }
-
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/datainsert`, {
         method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${session.user.accessToken}`, // <<< Megvan
-        },
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -43,17 +33,16 @@ export const useProfileLogic = () => {
     }
   };
 
-  const updateProfile = async (field, value) => {
+  const updateProfile = async (field: string, value: string) => {
     try {
+      await getCsrfToken();
+
       const formData = new FormData();
       formData.append(field, value);
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/update`, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
+        credentials: "include",
         body: formData,
       });
 
@@ -70,11 +59,8 @@ export const useProfileLogic = () => {
   };
 
   useEffect(() => {
-    // FONTOS: csak akkor fusson le, ha session ready!
-    if (status === "authenticated") {
-      fetchUserProfile();
-    }
-  }, [status, session]); // figyelje a session változást!
+    fetchUserProfile();
+  }, []);
 
-  return { userData, error, session, fetchUserProfile };
+  return { userData, error, fetchUserProfile, updateProfile };
 };

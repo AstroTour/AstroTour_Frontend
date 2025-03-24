@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat } from 'next/font/google';
 import Navbar from "./componens/Navbar";
+import { UserProvider } from "./componens/UserContext"; 
 
 
 const montserrat = Montserrat({
@@ -28,8 +29,10 @@ export default function RootLayout({
       <body className="min-h-screen bg-no-repeat bg-cover bg-center"
         style={{ backgroundImage: "url('/galaxy.jpg')" }}>
         <main>
-            <Navbar />
-            {children}
+            <UserProvider>
+              <Navbar />
+              {children}
+            </UserProvider>
         </main>
       </body>
     </html>

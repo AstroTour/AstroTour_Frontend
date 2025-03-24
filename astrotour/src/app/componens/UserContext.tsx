@@ -1,7 +1,9 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-export const useUserData = () => {
+const UserContext = createContext<any>(null);
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<{
     id: number;
     email: string;
@@ -15,7 +17,6 @@ export const useUserData = () => {
         method: "GET",
         credentials: "include",
       });
-
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -27,9 +28,16 @@ export const useUserData = () => {
     }
   }, []);
 
+  // Oldal betöltéskor user betöltés
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
-  return { user, fetchUser }; // FONTOS: adjuk vissza!
+  return (
+    <UserContext.Provider value={{ user, fetchUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
+
+export const useUserContext = () => useContext(UserContext);

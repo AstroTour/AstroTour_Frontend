@@ -36,7 +36,9 @@ export function useReservationLogic(selectedPlanetId: number, seatType: boolean,
   
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reservation`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          Accept: "application/json"
+         },
         credentials: "include",
         body: JSON.stringify({
           schedule_id: selectedSchedule,

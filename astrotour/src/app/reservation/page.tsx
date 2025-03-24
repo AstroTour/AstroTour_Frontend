@@ -167,9 +167,9 @@ function Page() {
                   type="radio"
                   name="package"
                   className="form-radio"
-                  value="Alap"
+                  value="Basic"
                   onChange={(e) => setTicketType(e.target.value)}
-                  checked={ticketType === "Alap"}
+                  checked={ticketType === "Basic"}
                 />
                 <span className="text-xl text-white">Alap</span>
               </label>
@@ -178,9 +178,9 @@ function Page() {
                   type="radio"
                   name="package"
                   className="form-radio"
-                  value="V.I.P"
+                  value="VIP"
                   onChange={(e) => setTicketType(e.target.value)}
-                  checked={ticketType === "V.I.P"}
+                  checked={ticketType === "VIP"}
                 />
                 <span className="text-xl text-white">V.I.P</span>
               </label>

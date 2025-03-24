@@ -1,13 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { useProfileLogic } from "../componens/useProfileLogic";
 import Modal from "../componens/Modal";
 import Image from "next/image";
+import { useUserContext } from "../componens/UserContext";
 
 export default function ProfilPage() {
-  const { userData, error, session, fetchUserProfile } = useProfileLogic();
+  const { user, fetchUser } = useUserContext();
 
-  const [editField, setEditField] = useState(null);
+  const [editField, setEditField] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [pendingData, setPendingData] = useState({
@@ -17,9 +17,9 @@ export default function ProfilPage() {
   });
   const [changed, setChanged] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // ÚJ!
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  if (!userData) {
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="w-24 h-24 animate-spin">
@@ -65,10 +65,7 @@ export default function ProfilPage() {
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/update`, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
+        credentials: "include",
         body: formData,
       });
 
@@ -77,10 +74,10 @@ export default function ProfilPage() {
         return;
       }
 
-      await fetchUserProfile();
+      await fetchUser(); // FONTOS!
       setPendingData({ username: "", email: "", password: "" });
       setChanged(false);
-      setShowSuccessModal(true); // Sikeres modal megnyitása!
+      setShowSuccessModal(true);
     } catch (err) {
       alert("Mentési hiba!");
     }
@@ -92,7 +89,7 @@ export default function ProfilPage() {
       <div className="bg-black bg-opacity-70 p-6 rounded-3xl shadow-md flex-1 flex flex-col items-center justify-center">
         <h3 className="text-xl mb-4">Profilkép</h3>
         <img
-          src={userData?.profile_image ? `${process.env.NEXT_PUBLIC_API_URL}/${userData.profile_image}` : '/images/default.png'}
+          src={user.profile_image ? `${process.env.NEXT_PUBLIC_API_URL}/${user.profile_image}` : '/images/default.png'}
           alt="Profilkép"
           className="w-32 h-32 rounded-full mb-4"
         />
@@ -109,11 +106,11 @@ export default function ProfilPage() {
 
         <div className="space-y-6 divide-y divide-gray-500/50">
           <div className="pt-4">
-            <strong>Felhasználónév:</strong> {pendingData.username || userData.username}
+            <strong>Felhasználónév:</strong> {pendingData.username || user.username}
             <button
               onClick={() => {
                 setEditField("username");
-                setInputValue(userData.username);
+                setInputValue(user.username);
               }}
               className="ml-4 text-blue-400">
               Módosít
@@ -121,11 +118,11 @@ export default function ProfilPage() {
           </div>
 
           <div className="pt-4">
-            <strong>Email:</strong> {pendingData.email || userData.email}
+            <strong>Email:</strong> {pendingData.email || user.email}
             <button
               onClick={() => {
                 setEditField("email");
-                setInputValue(userData.email);
+                setInputValue(user.email);
               }}
               className="ml-4 text-blue-400">
               Módosít

@@ -11,6 +11,7 @@ export const useSinginLogic = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [message, setMessage] = useState(""); // üzenet (pl kijelentkezés után)
 
   const toggleForm = () => {
     setError("");
@@ -36,15 +37,15 @@ export const useSinginLogic = () => {
     });
   };
 
+  // LOGIN
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
-      // CSRF token szükséges!
       await getCsrfToken();
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,8 +57,9 @@ export const useSinginLogic = () => {
 
       if (res.status === 200) {
         const data = await res.json();
-        console.log("Sikeres login, user:", data.user);
+        console.log("Sikeres login:", data.user);
         setIsAuthenticated(true);
+        setMessage("");
         router.push("/");
       } else {
         const data = await res.json();
@@ -68,6 +70,7 @@ export const useSinginLogic = () => {
     }
   };
 
+  // REGISZTRÁCIÓ
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -75,7 +78,7 @@ export const useSinginLogic = () => {
     await getCsrfToken();
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,8 +89,7 @@ export const useSinginLogic = () => {
       });
 
       if (res.status === 201) {
-        // Automatikus login regisztráció után
-        await handleLogin(e);
+        await handleLogin(e); // automatikus login
       } else {
         const data = await res.json();
         setError(data.message || "Hiba a regisztráció során.");
@@ -97,6 +99,7 @@ export const useSinginLogic = () => {
     }
   };
 
+  // AUTH CHECK
   const checkAuth = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client`, {
@@ -114,6 +117,24 @@ export const useSinginLogic = () => {
     }
   };
 
+  // KIJELENTKEZÉS
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      setIsAuthenticated(false);
+      setMessage("Sikeresen kijelentkeztél!");
+      router.push("/");
+
+      // Üzenet eltüntetése pl. 2 mp után:
+      setTimeout(() => setMessage(""), 2000);
+    } catch (err) {
+      console.error("Hiba a kijelentkezés során:", err);
+    }
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -127,9 +148,11 @@ export const useSinginLogic = () => {
     password,
     setPassword,
     error,
+    message,
     toggleForm,
     handleLogin,
     handleRegister,
+    handleLogout, // <<< FONTOS!
     isAuthenticated,
   };
 };

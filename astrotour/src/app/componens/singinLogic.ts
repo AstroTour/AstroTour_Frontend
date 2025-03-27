@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUserContext } from "./UserContext";
 
 export const useSinginLogic = () => {
   const router = useRouter();
+  const { fetchUser } = useUserContext();
 
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState("");
@@ -74,9 +76,9 @@ export const useSinginLogic = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     await getCsrfToken();
-
+  
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
         method: "POST",
@@ -85,19 +87,52 @@ export const useSinginLogic = () => {
           Accept: "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({
+          name: username,
+          email,
+          password,
+          password_confirmation: password,
+        }),
       });
-
+  
+      const data = await res.json();
+  
       if (res.status === 201) {
-        await handleLogin(e); // automatikus login
+        // automatikus bejelentkezés
+        const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        });
+  
+        if (loginRes.ok) {
+          await fetchUser();
+          setIsAuthenticated(true);
+          setMessage("");
+          router.push("/");
+        } else {
+          const loginData = await loginRes.json();
+          setError(loginData.message || "Sikeres regisztráció, de hibás belépés.");
+        }
+  
+      } else if (res.status === 422 && data.errors) {
+        console.log("Validációs hiba:", data.errors);
+        const firstError = Object.values(data.errors)[0][0];
+        setError(firstError);
       } else {
-        const data = await res.json();
-        setError(data.message || "Hiba a regisztráció során.");
+        setError(data.message || "Ismeretlen hiba történt.");
       }
+  
     } catch (err) {
+      console.error("Hálózati vagy ismeretlen hiba:", err);
       setError("Hiba történt.");
     }
   };
+  
 
   // AUTH CHECK
   const checkAuth = async () => {
@@ -152,7 +187,7 @@ export const useSinginLogic = () => {
     toggleForm,
     handleLogin,
     handleRegister,
-    handleLogout, // <<< FONTOS!
+    handleLogout,
     isAuthenticated,
   };
 };

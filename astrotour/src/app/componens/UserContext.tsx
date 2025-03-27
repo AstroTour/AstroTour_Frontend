@@ -1,15 +1,27 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-const UserContext = createContext<any>(null);
+interface User {
+  id: number;
+  email: string;
+  name: string;
+  role?: string;
+}
+
+interface UserContextType {
+  user: User | null;
+  fetchUser: () => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const UserContext = createContext<UserContextType>({
+  user: null,
+  fetchUser: async () => {},
+  setUser: () => {},
+});
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<{
-    id: number;
-    email: string;
-    name: string;
-    role?: string;
-  } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -28,13 +40,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // Oldal betöltéskor user betöltés
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
   return (
-    <UserContext.Provider value={{ user, fetchUser }}>
+    <UserContext.Provider value={{ user, fetchUser, setUser }}>
       {children}
     </UserContext.Provider>
   );

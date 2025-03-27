@@ -119,12 +119,6 @@ export const useSinginLogic = () => {
           setError(loginData.message || "Sikeres regisztráció, de hibás belépés.");
         }
   
-      } else if (res.status === 422 && data.errors) {
-        console.log("Validációs hiba:", data.errors);
-        const firstError = Object.values(data.errors)[0][0];
-        setError(firstError);
-      } else {
-        setError(data.message || "Ismeretlen hiba történt.");
       }
   
     } catch (err) {

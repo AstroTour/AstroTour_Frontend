@@ -67,9 +67,19 @@ function Navbar() {
             <Link href="/about" className="relative m-4 pb-2 text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:left-1/2 hover:after:right-1/2">
               Rólunk
             </Link>
-            <Link href="/reservation" className="relative m-4 pb-2 text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:left-1/2 hover:after:right-1/2">
+            <button
+              onClick={() => {
+                if (isLoggedIn) {
+                  router.push("/reservation");
+                } else {
+                  setLogoutMessage("Kérlek jelentkezz be a foglaláshoz!🚀");
+                  setShowToast(true);
+                  setTimeout(() => setShowToast(false), 2500);
+                }
+              }}
+              className="relative m-4 pb-2 text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:left-1/2 hover:after:right-1/2">
               Foglalás
-            </Link>
+            </button>
             <Link href="/planets" className="relative m-4 pb-2 text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:left-1/2 hover:after:right-1/2">
               Bolygók
             </Link>

@@ -31,5 +31,5 @@ export const useUserData = () => {
     fetchUser();
   }, [fetchUser]);
 
-  return { user, fetchUser }; // FONTOS: adjuk vissza!
+  return { user, fetchUser };
 };

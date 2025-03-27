@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Képek configja marad változatlan
+  
   images: {
     remotePatterns: [
       {
@@ -15,7 +15,7 @@ const nextConfig = {
         protocol: "http",
         hostname: "localhost",
         port: "8000",
-        pathname: "/picture/**",
+        pathname: "/gallery/**",
       },
     ],
   },

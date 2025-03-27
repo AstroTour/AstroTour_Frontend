@@ -74,7 +74,7 @@ export default function ProfilPage() {
         return;
       }
 
-      await fetchUser(); // FONTOS!
+      await fetchUser();
       setPendingData({ username: "", email: "", password: "" });
       setChanged(false);
       setShowSuccessModal(true);
@@ -112,7 +112,7 @@ export default function ProfilPage() {
                 setEditField("username");
                 setInputValue(user.username);
               }}
-              className="ml-4 text-blue-400">
+              className="ml-4 text-pink-400">
               Módosít
             </button>
           </div>
@@ -133,7 +133,7 @@ export default function ProfilPage() {
             <strong>Jelszó:</strong> ********
             <button
               onClick={() => setEditField("password")}
-              className="ml-4 text-blue-400">
+              className="ml-4 text-purple-400">
               Módosít
             </button>
           </div>

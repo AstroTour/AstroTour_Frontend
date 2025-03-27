@@ -88,7 +88,7 @@ export const useSinginLogic = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          name: username,
+          username,
           email,
           password,
           password_confirmation: password,

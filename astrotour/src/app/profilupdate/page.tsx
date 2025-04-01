@@ -19,6 +19,7 @@ export default function ProfilPage() {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // Betöltés
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
@@ -38,6 +39,7 @@ export default function ProfilPage() {
     );
   }
 
+  // Modal mentése
   const handleModalSave = () => {
     if (editField === "password") {
       if (inputValue.length < 8 || inputValue !== confirmPassword) {
@@ -56,6 +58,7 @@ export default function ProfilPage() {
     setConfirmPassword("");
   };
 
+  // Végleges mentés
   const handleFinalSave = async () => {
     try {
       const formData = new FormData();

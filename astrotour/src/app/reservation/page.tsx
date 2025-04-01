@@ -6,22 +6,25 @@ import Image from "next/image";
 import { useReservationLogic } from "../componens/useReservationLogic";
 
 const planets = [
-  { id: 1, name: "Merkúr", image: "/image/mercury.png", thumbnail: "/image/mercury.png" },
-  { id: 2, name: "Vénus", image: "/image/venus.png", thumbnail: "/image/venus.png" },
-  { id: 3, name: "Föld", image: "/image/earth.png", thumbnail: "/image/earth.png" },
-  { id: 4, name: "Mars", image: "/image/mars.png", thumbnail: "/image/mars.png" },
-  { id: 5, name: "Jupiter", image: "/image/jupiter.png", thumbnail: "/image/jupiter.png" },
-  { id: 6, name: "Szaturnusz", image: "/image/saturnus.png", thumbnail: "/image/saturnus.png" },
-  { id: 7, name: "Uránusz", image: "/image/uranus.png", thumbnail: "/image/uranus.png" },
-  { id: 8, name: "Neptunusz", image: "/image/neptune.png", thumbnail: "/image/neptune.png" },
-  { id: 9, name: "Plútó", image: "/image/pluto.png", thumbnail: "/image/pluto.png" }
+  { id: 1, name: "Merkúr", image: "/image/mercury.png", thumbnail: "/image/mercury.png", price: 10000000},
+  { id: 2, name: "Vénus", image: "/image/venus.png", thumbnail: "/image/venus.png", price: 8000000},
+  { id: 3, name: "Föld", image: "/image/earth.png", thumbnail: "/image/earth.png", price: 0},
+  { id: 4, name: "Mars", image: "/image/mars.png", thumbnail: "/image/mars.png", price: 13000000},
+  { id: 5, name: "Jupiter", image: "/image/jupiter.png", thumbnail: "/image/jupiter.png", price: 20000000},
+  { id: 6, name: "Szaturnusz", image: "/image/saturnus.png", thumbnail: "/image/saturnus.png", price: 50000000},
+  { id: 7, name: "Uránusz", image: "/image/uranus.png", thumbnail: "/image/uranus.png", price: 100000000},
+  { id: 8, name: "Neptunusz", image: "/image/neptune.png", thumbnail: "/image/neptune.png", price: 200000000},
+  { id: 9, name: "Plútó", image: "/image/pluto.png", thumbnail: "/image/pluto.png", price: 300000000}
 ];
 
 function Page() {
   const [selectedPlanet, setSelectedPlanet] = useState(planets[0]);
-  const [ticketType, setTicketType] = useState("Alap");
+  const [ticketType, setTicketType] = useState("Basic");
   const [seatType, setSeatType] = useState(false);
   const [showShip, setShowShip] = useState(false);
+  const vipExtraFee = 5000000;
+  const totalPrice = selectedPlanet.price + (ticketType === "VIP" ? vipExtraFee : 0);
+  const [showDetails, setShowDetails] = useState(false);
 
   const {
     schedules,
@@ -30,7 +33,7 @@ function Page() {
     message,
     setMessage,
     handleReservation
-  } = useReservationLogic(selectedPlanet.id, seatType, ticketType);
+  } = useReservationLogic(selectedPlanet.id, seatType, ticketType, totalPrice);
 
   const { scrollYProgress } = useScroll();
   const yTransform = useTransform(scrollYProgress, [0, 1], ["0%", "200%"]);
@@ -124,17 +127,19 @@ function Page() {
                 <button
                   key={planet.name}
                   onClick={() => setSelectedPlanet(planet)}
-                  className={`border-2 rounded-full overflow-hidden w-20 h-20 ${
-                    selectedPlanet.name === planet.name ? "border-blue-500" : "border-transparent"
-                  }`}
-                >
+                  className={`border-2 rounded-xl p-2 text-white text-center flex flex-col items-center justify-center ${
+                    selectedPlanet.name === planet.name ? "border-blue-500" : "border-transparent"}`}>
                   <Image
                     src={planet.thumbnail || planet.image}
                     alt={planet.name}
-                    width={80}
-                    height={80}
+                    width={60}
+                    height={60}
                     objectFit="cover"
                   />
+                  <div className="text-sm mt-2">{planet.name}</div>
+                  <div className="text-sm text-gray-300 font-bold mb-1">
+                    {planet.price.toLocaleString()} Ft
+                  </div>
                 </button>
               ))}
             </div>
@@ -160,8 +165,14 @@ function Page() {
 
           {/* Csomagok szekció */}
           <section id="packages" className="bg-black bg-opacity-60 backdrop-blur-md rounded-2xl px-8 py-6 shadow-lg">
-            <h2 className="text-3xl mb-6 font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-white">Csomagok</h2>
-            <div className="flex gap-6">
+            <h2 className="text-3xl mb-6 font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-white">
+              Csomagok
+            </h2>
+            
+            {/* Csomagok + részletek */}
+            <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+              
+              {/* Alap csomag */}
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -173,6 +184,8 @@ function Page() {
                 />
                 <span className="text-xl text-white">Alap</span>
               </label>
+
+              {/* VIP csomag */}
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -182,8 +195,21 @@ function Page() {
                   onChange={(e) => setTicketType(e.target.value)}
                   checked={ticketType === "VIP"}
                 />
-                <span className="text-xl text-white">V.I.P</span>
+                <span className="text-xl text-white">
+                  V.I.P{" "}
+                  <span className="text-sm text-green-400">
+                    +{vipExtraFee.toLocaleString()} Ft
+                  </span>
+                </span>
               </label>
+
+              {/* Részletek gomb */}
+              <button
+                onClick={() => setShowDetails(true)}
+                className="text-sm text-blue-400 hover:underline ml-auto"
+              >
+                Részletek
+              </button>
             </div>
           </section>
 
@@ -215,6 +241,13 @@ function Page() {
             </div>
           </section>
 
+          <section className="bg-black bg-opacity-60 backdrop-blur-md rounded-2xl px-8 py-4 shadow-lg text-white text-xl">
+            <div className="flex justify-between">
+              <span>Végösszeg:</span>
+              <span className="font-bold text-green-400">{totalPrice.toLocaleString()} Ft</span>
+            </div>
+          </section>
+
           {/* Foglalás gomb */}
           <button className="w-full bg-blue-600 text-white py-4 rounded-3xl shadow-lg text-xl" onClick={handleReservation}>
             Foglalás
@@ -229,6 +262,50 @@ function Page() {
             <p className="text-xl text-white">{message}</p>
             <button className="mt-4 px-4 py-2 bg-purple-700 text-white rounded-3xl" onClick={() => setMessage("")}>
               Bezár
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-black/90 text-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[800px] relative">
+            <h2 className="text-2xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+              Jegyek Részletezése
+            </h2>
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* BAL oldal - BASIC */}
+              <div className="flex-1 space-y-2">
+                <h3 className="text-xl font-semibold text-blue-400">Basic</h3>
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  <li>Poggyász: 2 poggyász</li>
+                  <li>Ellátás: korlátolt fogyasztás + önköltség (étel, ital)</li>
+                  <li>Szórakoztatás: saját eszköz, Űr túrai érdekességek elérhetősége</li>
+                  <li>Beszállás: Utolsó csoportok egyike</li>
+                </ul>
+              </div>
+
+              {/* Függőleges elválasztó */}
+              <div className="w-px bg-gray-600 hidden md:block" />
+
+              {/* JOBB oldal - VIP */}
+              <div className="flex-1 space-y-2">
+                <h3 className="text-xl font-semibold text-yellow-400">VIP</h3>
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  <li>Poggyász: 4 poggyász</li>
+                  <li>Ellátás: korlátlan fogyasztás (étel, ital)</li>
+                  <li>Szórakoztatás: biztosított eszköz, Űr túrai érdekességek elérhetősége</li>
+                  <li>Beszállás: Elsőként történő beszállás</li>
+                  <li>Ülés: Ülő párna a kényelmesebb utazási élményért</li>
+                </ul>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowDetails(false)}
+              className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-3xl text-sm"
+            >
+              Bezárás
             </button>
           </div>
         </div>

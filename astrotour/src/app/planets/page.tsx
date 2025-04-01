@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/planet.css';
 
-// Alapértelmezett bolygó adatok – ezek a fetch előtt lesznek használva
+// Alapértelmezett bolygó adatok
 const defaultPlanets = [
   { id: 1, name: "Merkúr", thumbnail: "/image/mercury.png", information: "Merkúr információ..." },
   { id: 2, name: "Vénusz", thumbnail: "/image/venus.png", information: "Vénusz információ..." },
@@ -30,8 +30,6 @@ function Page() {
         return response.json();
       })
       .then((data) => {
-        // Feltételezzük, hogy a backend ugyanolyan struktúrát ad vissza,
-        // mint a defaultPlanets, de tartalmazza az "information" mezőt
         setPlanets(data);
         setLoading(false);
       })
@@ -42,7 +40,7 @@ function Page() {
       });
   }, []);
 
-  // getPlanetInfo: visszaadja a megadott bolygó információját (magyar nevekkel)
+
   const getPlanetInfo = (planetName) => {
     const planet = planets.find(
       (p) => p.name.toLowerCase() === planetName.toLowerCase()

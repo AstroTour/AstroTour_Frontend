@@ -18,7 +18,7 @@ const planets = [
 const Planets = () => {
   const [angle, setAngle] = useState(0);
   const [sunRotation, setSunRotation] = useState(0);
-  const [screenSize, setScreenSize] = useState("large"); // 'small', 'medium', 'large'
+  const [screenSize, setScreenSize] = useState("large");
 
   // Figyeljük az ablak méretét és beállítjuk a megfelelő méretet
   useEffect(() => {

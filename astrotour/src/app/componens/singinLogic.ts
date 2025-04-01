@@ -13,7 +13,7 @@ export const useSinginLogic = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [message, setMessage] = useState(""); // üzenet (pl kijelentkezés után)
+  const [message, setMessage] = useState("");
 
   const toggleForm = () => {
     setError("");
@@ -157,7 +157,7 @@ export const useSinginLogic = () => {
       setMessage("Sikeresen kijelentkeztél!");
       router.push("/");
 
-      // Üzenet eltüntetése pl. 2 mp után:
+      // Üzenet eltüntetése
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
       console.error("Hiba a kijelentkezés során:", err);

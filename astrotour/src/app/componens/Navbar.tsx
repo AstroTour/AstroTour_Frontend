@@ -12,14 +12,14 @@ function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [logoutMessage, setLogoutMessage] = useState(""); // Toast üzenet
-  const [showToast, setShowToast] = useState(false); // Toast láthatóság
+  const [logoutMessage, setLogoutMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   const isLoggedIn = !!user;
   const userRole = user?.role || "";
 
   useEffect(() => {
-    fetchUser(); // mindig frissítünk
+    fetchUser();
   }, [pathname, fetchUser]);
 
   const handleLogout = async () => {
@@ -31,9 +31,9 @@ function Navbar() {
       if (res.ok) {
         setLogoutMessage("Sikeres kijelentkezés! 🚀");
         setShowToast(true);
-        fetchUser(); // Állapot frissítés
+        fetchUser();
 
-        // 2 másodperc után eltüntetjük az üzenetet és átdobjuk a főoldalra
+        
         setTimeout(() => {
           setShowToast(false);
           router.push("/");

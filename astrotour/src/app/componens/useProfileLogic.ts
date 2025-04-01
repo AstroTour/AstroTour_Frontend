@@ -5,6 +5,7 @@ export const useProfileLogic = () => {
   const [userData, setUserData] = useState<{ username: string; email: string } | null>(null);
   const [error, setError] = useState("");
 
+  // CSRF token lekérése
   const getCsrfToken = async () => {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
       method: "GET",
@@ -12,6 +13,7 @@ export const useProfileLogic = () => {
     });
   };
 
+  // Felhasználói profil lekérése
   const fetchUserProfile = async () => {
     try {
       await getCsrfToken();
@@ -33,6 +35,7 @@ export const useProfileLogic = () => {
     }
   };
 
+  // Profil mező frissítése
   const updateProfile = async (field: string, value: string) => {
     try {
       await getCsrfToken();
@@ -51,7 +54,7 @@ export const useProfileLogic = () => {
         return;
       }
 
-      await fetchUserProfile(); // újratöltés
+      await fetchUserProfile();
 
     } catch (err) {
       setError("Frissítési hiba!");

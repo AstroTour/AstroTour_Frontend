@@ -6,10 +6,11 @@ const FlightTables = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Lekéri az összes járatot
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/schedule"); // API hívás
+        const response = await fetch("http://localhost:8000/api/schedule");
         if (!response.ok) {
           throw new Error("Hiba történt az adatok betöltésekor.");
         }
@@ -26,6 +27,7 @@ const FlightTables = () => {
     fetchSchedule();
   }, []);
 
+  // Betöltés
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-auto">

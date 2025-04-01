@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 
-export function useReservationLogic(selectedPlanetId: number, seatType: boolean, ticketType: string) {
+export function useReservationLogic(selectedPlanetId: number,seatType: boolean,ticketType: string,total: number) {
   const [schedules, setSchedules] = useState([]);
   const [selectedSchedule, setSelectedSchedule] = useState("");
   const [message, setMessage] = useState("");
 
+  // Indulási időpontok lekérése
   useEffect(() => {
     async function fetchSchedules() {
       try {
@@ -24,6 +25,7 @@ export function useReservationLogic(selectedPlanetId: number, seatType: boolean,
     fetchSchedules();
   }, [selectedPlanetId]);
 
+  // Foglalás küldése a backendnek
   const handleReservation = async () => {
     if (!selectedSchedule) {
       setMessage("Kérlek válassz indulási időpontot a foglaláshoz!");
@@ -36,14 +38,16 @@ export function useReservationLogic(selectedPlanetId: number, seatType: boolean,
   
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reservation`, {
         method: "POST",
-        headers: { "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
           Accept: "application/json"
-         },
+        },
         credentials: "include",
         body: JSON.stringify({
           schedule_id: selectedSchedule,
           ticket_type: ticketType,
-          seat: seatType
+          seat: seatType,
+          total: total
         })
       });
   

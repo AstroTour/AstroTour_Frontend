@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
+// Egyetlen tájékoztató kártya megjelenítése
 const Page = ({ title, content, image }) => {
   return (
     <div className="flex justify-center items-center">
@@ -36,6 +37,7 @@ const PageContainer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Adatok lekérése
   useEffect(() => {
     const fetchProspectus = async () => {
       try {
@@ -67,6 +69,7 @@ const PageContainer = () => {
     fetchProspectus();
   }, []);
 
+  // Betöltés
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">

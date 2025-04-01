@@ -20,9 +20,11 @@ const UserContext = createContext<UserContextType>({
   setUser: () => {},
 });
 
+
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  // Felhasználó adatainak lekérése
   const fetchUser = useCallback(async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client`, {

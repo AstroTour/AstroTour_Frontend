@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+// Egyetlen kép megjelenítése a gallériában
 const Page = ({ image }: { image: string }) => {
   if (!image) return null;
 
@@ -21,9 +22,11 @@ const Page = ({ image }: { image: string }) => {
   );
 };
 
+
 const ImageContainer = () => {
   const [images, setImages] = useState<string[]>([]);
 
+  // képek lekérése
   useEffect(() => {
     const fetchImages = async () => {
       const res = await fetch('http://localhost:8000/api/gallery');
@@ -37,6 +40,8 @@ const ImageContainer = () => {
     fetchImages();
   }, []);
 
+
+  // Képek megjelenítése
   return (
     <div className="container mx-auto p-10 relative z-0">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">

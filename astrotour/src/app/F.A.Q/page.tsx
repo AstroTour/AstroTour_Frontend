@@ -7,6 +7,7 @@ const FAQPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Lekéri a GY.I.K. adatokat
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
@@ -27,10 +28,10 @@ const FAQPage = () => {
     fetchFAQs();
   }, []);
 
+  // Betöltés
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        {/* Betöltési animáció forgó űrhajóval */}
         <div className="w-24 h-24 animate-spin">
           <Image
             src="/rocket.png"
@@ -60,7 +61,6 @@ const FAQPage = () => {
           GY.I.K.
         </h2>
 
-        {/* GYIK lista dinamikusan a backend adatokkal */}
         <div className="space-y-6">
           {faqs.map((faq, index) => (
             <div key={index} className="border-b border-white/20 pb-4">

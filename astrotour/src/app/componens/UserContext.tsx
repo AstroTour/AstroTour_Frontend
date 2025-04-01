@@ -4,8 +4,10 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 interface User {
   id: number;
   email: string;
-  name: string;
+  username?: string;
+  name?: string;
   role?: string;
+  profile_image?: string;
 }
 
 interface UserContextType {
@@ -27,13 +29,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Felhasználó adatainak lekérése
   const fetchUser = useCallback(async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/client`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/avatarInsert`, {
         method: "GET",
         credentials: "include",
       });
       if (res.ok) {
         const data = await res.json();
-        setUser(data.user);
+        setUser(data);
       } else {
         setUser(null);
       }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Modal from "../componens/Modal";
 import Image from "next/image";
 import { useUserContext } from "../componens/UserContext";
+import ProfileImageSelector from "../componens/ProfileImageSelector";
 
 export default function ProfilPage() {
   const { user, fetchUser } = useUserContext();
@@ -92,7 +93,7 @@ export default function ProfilPage() {
       <div className="bg-black bg-opacity-70 p-6 rounded-3xl shadow-md flex-1 flex flex-col items-center justify-center">
         <h3 className="text-xl mb-4">Profilkép</h3>
         <img
-          src={user.profile_image ? `${process.env.NEXT_PUBLIC_API_URL}/${user.profile_image}` : '/images/default.png'}
+          src={user.profile_image ?? "/images/default.png"}
           alt="Profilkép"
           className="w-32 h-32 rounded-full mb-4"
         />
@@ -231,8 +232,17 @@ export default function ProfilPage() {
       {/* Modal - Profilkép */}
       {isImageModalOpen && (
         <Modal
-          title="Profilkép módosítása"
-          onClose={() => setIsImageModalOpen(false)}>
+          title="Profilkép kiválasztása"
+          onClose={() => setIsImageModalOpen(false)}
+        >
+          <ProfileImageSelector
+            onClose={() => setIsImageModalOpen(false)}
+            onSuccess={() => {
+              fetchUser();
+              setIsImageModalOpen(false);
+              setShowSuccessModal(true);
+            }}
+          />
         </Modal>
       )}
 

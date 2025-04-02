@@ -4,9 +4,12 @@ import Modal from "../componens/Modal";
 import Image from "next/image";
 import { useUserContext } from "../componens/UserContext";
 import ProfileImageSelector from "../componens/ProfileImageSelector";
+import { useProfileLogic } from "../componens/useProfileLogic";
+import ReservationCard from "../componens/ReservationCard";
 
 export default function ProfilPage() {
   const { user, fetchUser } = useUserContext();
+  const { reservation, handleDeleteReservation } = useProfileLogic();
 
   const [editField, setEditField] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -95,7 +98,7 @@ export default function ProfilPage() {
         <img
           src={user.profile_image ?? "/images/default.png"}
           alt="Profilkép"
-          className="w-32 h-32 rounded-full mb-4"
+          className="w-[600px] h-[600px] rounded-full mb-4 shadow-xl ring-4 ring-blue-500"
         />
         <button
           onClick={() => setIsImageModalOpen(true)}
@@ -109,39 +112,48 @@ export default function ProfilPage() {
         <h3 className="text-xl mb-4">Profil adatok</h3>
 
         <div className="space-y-6 divide-y divide-gray-500/50">
-          <div className="pt-4">
-            <strong>Felhasználónév:</strong> {pendingData.username || user.username}
+          <div className="pt-4 text-xl">
+            <strong className="font-semibold">Felhasználónév:</strong> {pendingData.username || user.username}
             <button
               onClick={() => {
                 setEditField("username");
                 setInputValue(user.username);
               }}
-              className="ml-4 text-pink-400">
+              className="ml-4 text-pink-400 text-base hover:underline">
               Módosít
             </button>
           </div>
 
-          <div className="pt-4">
-            <strong>Email:</strong> {pendingData.email || user.email}
+          <div className="pt-4 text-xl">
+            <strong className="font-semibold">Email:</strong> {pendingData.email || user.email}
             <button
               onClick={() => {
                 setEditField("email");
                 setInputValue(user.email);
               }}
-              className="ml-4 text-blue-400">
+              className="ml-4 text-blue-400 text-base hover:underline">
               Módosít
             </button>
           </div>
 
-          <div className="pt-4">
-            <strong>Jelszó:</strong> ********
+          <div className="pt-4 text-xl">
+            <strong className="font-semibold">Jelszó:</strong> ********
             <button
               onClick={() => setEditField("password")}
-              className="ml-4 text-purple-400">
+              className="ml-4 text-purple-400 text-base hover:underline">
               Módosít
             </button>
           </div>
         </div>
+
+        <hr className="my-8 border-gray-500" />
+
+        {/* FOGLALÁS KÁRTYA */}
+        {reservation ? (
+          <ReservationCard reservation={reservation} onCancel={handleDeleteReservation} />
+        ) : (
+          <p className="text-center text-gray-300">Jelenleg nincs aktív foglalásod.</p>
+        )}
 
         {changed && (
           <button
@@ -151,6 +163,7 @@ export default function ProfilPage() {
           </button>
         )}
       </div>
+
 
       {/* Modal - Username, Email, Password */}
       {editField && (

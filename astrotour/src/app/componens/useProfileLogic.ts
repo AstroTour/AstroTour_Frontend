@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 export const useProfileLogic = () => {
   const [userData, setUserData] = useState<{ username: string; email: string } | null>(null);
   const [error, setError] = useState("");
+  const [reservation, setReservation] = useState<any>(null);
+  const [reservationError, setReservationError] = useState("");
 
   // CSRF token lekérése
   const getCsrfToken = async () => {
@@ -65,5 +67,63 @@ export const useProfileLogic = () => {
     fetchUserProfile();
   }, []);
 
-  return { userData, error, fetchUserProfile, updateProfile };
+  // Foglalás adatainak lekérése
+  const fetchReservation = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+        credentials: "include",
+      });
+  
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reservationData`, {
+        credentials: "include",
+      });
+  
+      if (!res.ok) {
+        setReservation(null);
+        return;
+      }
+  
+      const data = await res.json();
+      setReservation(data);
+    } catch (err) {
+      setReservationError("Nem sikerült lekérni a foglalást.");
+    }
+  };
+  
+  useEffect(() => {
+    fetchReservation();
+  }, []);
+
+  // Foglalás törlése
+  const handleDeleteReservation = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+        credentials: "include",
+      });
+  
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reservationDelete`, {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      if (!res.ok) {
+        alert("Nem sikerült törölni a foglalást!");
+        return;
+      }
+  
+      alert("Foglalás sikeresen törölve!");
+      setReservation(null);
+    } catch (err) {
+      alert("Hiba történt törlés közben.");
+    }
+  };
+
+  return {
+    userData,
+    error,
+    fetchUserProfile,
+    updateProfile,
+    reservation,
+    handleDeleteReservation
+  };
 };

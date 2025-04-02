@@ -23,8 +23,12 @@ function Page() {
   const [seatType, setSeatType] = useState(false);
   const [showShip, setShowShip] = useState(false);
   const vipExtraFee = 5000000;
-  const totalPrice = selectedPlanet.price + (ticketType === "VIP" ? vipExtraFee : 0);
+  const ablakExtraFee = 2000000;
   const [showDetails, setShowDetails] = useState(false);
+  const totalPrice =
+  selectedPlanet.price +
+  (ticketType === "VIP" ? vipExtraFee : 0) +
+  (seatType === true ? ablakExtraFee : 0);
 
   const {
     schedules,
@@ -223,20 +227,24 @@ function Page() {
                   type="radio"
                   name="seat"
                   className="form-radio"
-                  onChange={() => setSeatType(true)}
-                  checked={seatType === true}
+                  onChange={() => setSeatType(false)}
+                  checked={seatType === false}
                 />
-                <span className="text-xl text-white">Ablak mellett</span>
+                <span className="text-xl text-white">Folyosó mellett</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
                   name="seat"
                   className="form-radio"
-                  onChange={() => setSeatType(false)}
-                  checked={seatType === false}
-                />
-                <span className="text-xl text-white">Folyosó mellett</span>
+                  onChange={() => setSeatType(true)}
+                  checked={seatType === true}/>
+                <span className="text-xl text-white">
+                  Ablak mellett{" "}
+                  <span className="text-sm text-green-400">
+                    +{ablakExtraFee.toLocaleString()} Ft
+                  </span>
+                </span>
               </label>
             </div>
           </section>

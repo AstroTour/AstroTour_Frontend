@@ -9,7 +9,7 @@ import ReservationCard from "../componens/ReservationCard";
 
 export default function ProfilPage() {
   const { user, fetchUser } = useUserContext();
-  const { reservation, handleDeleteReservation } = useProfileLogic();
+  const { reservations, handleDeleteReservation } = useProfileLogic();
 
   const [editField, setEditField] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -149,8 +149,16 @@ export default function ProfilPage() {
         <hr className="my-8 border-gray-500" />
 
         {/* FOGLALÁS KÁRTYA */}
-        {reservation ? (
-          <ReservationCard reservation={reservation} onCancel={handleDeleteReservation} />
+        {reservations.length > 0 ? (
+          <div className="flex flex-wrap gap-4">
+            {reservations.map((res) => (
+              <ReservationCard
+                key={res.reservation_id}
+                reservation={res}
+                onCancel={() => handleDeleteReservation(res.reservation_id)}
+              />
+            ))}
+          </div>
         ) : (
           <p className="text-center text-gray-300">Jelenleg nincs aktív foglalásod.</p>
         )}

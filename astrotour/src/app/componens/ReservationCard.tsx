@@ -30,7 +30,8 @@ const ReservationCard: React.FC<ReservationProps> = ({ reservation, onCancel }) 
       <div className="flex justify-end mt-6">
         <button
           onClick={onCancel}
-          className="bg-red-600 px-5 py-2 rounded-lg hover:bg-red-700 text-sm font-semibold">
+          className="bg-red-600 px-5 py-2 rounded-lg hover:bg-red-700 text-sm font-semibold"
+        >
           Lemondás
         </button>
       </div>

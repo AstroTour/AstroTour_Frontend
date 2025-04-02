@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 export const useProfileLogic = () => {
   const [userData, setUserData] = useState<{ username: string; email: string } | null>(null);
   const [error, setError] = useState("");
-  const [reservation, setReservation] = useState<any>(null);
+  const [reservations, setReservations] = useState<any[]>([]);
   const [reservationError, setReservationError] = useState("");
 
   // CSRF token lekérése
@@ -65,6 +65,7 @@ export const useProfileLogic = () => {
 
   useEffect(() => {
     fetchUserProfile();
+    fetchReservation();
   }, []);
 
   // Foglalás adatainak lekérése
@@ -79,23 +80,23 @@ export const useProfileLogic = () => {
       });
   
       if (!res.ok) {
-        setReservation(null);
+        setReservations([]);
         return;
       }
   
       const data = await res.json();
-      setReservation(data);
+  
+      // ha egy darab, de listába csomagoljuk
+      setReservations(Array.isArray(data) ? data : [data]);
+  
     } catch (err) {
-      setReservationError("Nem sikerült lekérni a foglalást.");
+      setReservations([]);
+      setReservationError("Nem sikerült lekérni a foglalásokat.");
     }
   };
-  
-  useEffect(() => {
-    fetchReservation();
-  }, []);
 
   // Foglalás törlése
-  const handleDeleteReservation = async () => {
+  const handleDeleteReservation = async (id: number) => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
         credentials: "include",
@@ -112,7 +113,10 @@ export const useProfileLogic = () => {
       }
   
       alert("Foglalás sikeresen törölve!");
-      setReservation(null);
+  
+      // csak azt távolítsuk el, amit töröltünk
+      setReservations(prev => prev.filter(r => r.reservation_id !== id));
+  
     } catch (err) {
       alert("Hiba történt törlés közben.");
     }
@@ -123,7 +127,7 @@ export const useProfileLogic = () => {
     error,
     fetchUserProfile,
     updateProfile,
-    reservation,
+    reservations,
     handleDeleteReservation
   };
 };

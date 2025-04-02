@@ -22,6 +22,7 @@ export default function ProfilPage() {
   const [changed, setChanged] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
 
   // Betöltés
   if (!user) {
@@ -155,7 +156,10 @@ export default function ProfilPage() {
               <ReservationCard
                 key={res.reservation_id}
                 reservation={res}
-                onCancel={() => handleDeleteReservation(res.reservation_id)}
+                onCancel={() => {
+                  handleDeleteReservation(res.reservation_id);
+                  setShowDeleteSuccessModal(true);
+                }}
               />
             ))}
           </div>
@@ -277,6 +281,24 @@ export default function ProfilPage() {
           <div className="flex justify-end">
             <button
               onClick={() => setShowSuccessModal(false)}
+              className="bg-green-500 px-4 py-1 rounded hover:bg-green-600"
+            >
+              OK
+            </button>
+          </div>
+        </Modal>
+      )}
+  
+      {/* Modal - Sikeres törlés */}
+      {showDeleteSuccessModal && (
+        <Modal
+          title="Foglalás törölve"
+          onClose={() => setShowDeleteSuccessModal(false)}
+        >
+          <p className="mb-4">A foglalás sikeresen törölve lett. 🗑️</p>
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowDeleteSuccessModal(false)}
               className="bg-green-500 px-4 py-1 rounded hover:bg-green-600"
             >
               OK

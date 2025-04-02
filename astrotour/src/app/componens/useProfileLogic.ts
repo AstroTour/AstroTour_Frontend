@@ -108,17 +108,15 @@ export const useProfileLogic = () => {
       });
   
       if (!res.ok) {
-        alert("Nem sikerült törölni a foglalást!");
+        console.error("Nem sikerült törölni a foglalást!");
         return;
       }
   
-      alert("Foglalás sikeresen törölve!");
-  
-      // csak azt távolítsuk el, amit töröltünk
+      // Törlés utáni frissítés
       setReservations(prev => prev.filter(r => r.reservation_id !== id));
   
     } catch (err) {
-      alert("Hiba történt törlés közben.");
+      console.error("Hiba történt törlés közben.");
     }
   };
 

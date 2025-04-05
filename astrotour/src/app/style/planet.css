@@ -2212,8 +2212,8 @@ body .solar_systm .planet_description a span {
 }
 body .panel {
   position: absolute;
-  right: -520px;
-  width: 300px;
+  right: -560px;
+  width: 420px; 
   top: 0;
   height: 100vh;
   transition: all 0.2s;
@@ -2285,102 +2285,18 @@ body .panel p {
   line-height: 20px;
 }
 
-
-
-
 @media screen and (max-width: 1024px) {
-  /* A menü teljes szélességű és rugalmas elrendezés */
-  .menu {
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 0;
-      background: none !important; /* Nincs háttér */
-  }
-
-  /* Menüelemek elhelyezése egymás mellett */
-  .menu label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      text-align: center;
-      color: white;
-      cursor: pointer;
-      background: none !important; /* Nincs háttér */
-  }
-
-  /* Menü gombok méretezése */
-  .menu label {
-      flex: 1;
-      min-width: 80px;
-      max-width: 120px;
-  }
-
-  /* Menü ikonok (képek) méretezése */
-  .menu .preview {
-      width: 50px; /* Méretezhető ikonok */
-      height: 50px;
-  }
-
-  /* A bolygók információs panelja legyen alatta */
-  .solar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 10px;
-  }
-
-  .solar_systm {
-      width: 100%;
-      max-width: 500px;
-  }
-
-  /* A bolygók és azok leírásai középre igazítva */
-  .planet {
-      width: 100%;
-      text-align: center;
-  }
-
-  /* A bolygó információs panelok igazítása */
-  .panel {
-      width: 100%;
-      max-width: 500px;
-      margin: 10px auto;
-      text-align: center;
-  }
-
-  .panel img {
-      width: 100%;
-      height: auto;
-  }
-
-  /* Mobil nézet további igazítás */
-  @media screen and (max-width: 600px) {
-      .menu {
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: center;
-      }
-
-      .menu label {
-          min-width: 60px;
-          max-width: 100px;
-          font-size: 12px;
-      }
-
-      .solar_systm {
-          max-width: 100%;
-      }
-
-      .panel {
-          max-width: 100%;
-      }
+  .desktop-planet-view {
+    display: none;
   }
 }
+
+@media screen and (min-width: 1025px) {
+  .mobile-card-view {
+    display: none;
+  }
+}
+
 
 
 
